@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Sumo Manager スタート画面 見本 1</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP",serif;color:#fff;overflow:hidden;background:#111}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.credit{position:fixed;right:8px;bottom:6px;font:11px/1.3 sans-serif;color:rgba(255,255,255,.75);text-shadow:0 1px 2px #000;z-index:9}
+.tag{position:fixed;left:8px;top:8px;font:12px sans-serif;background:rgba(0,0,0,.55);padding:3px 8px;border-radius:3px;z-index:9}
+
+.bg{position:fixed;inset:0;background:url(../img/nishikie_dohyoiri.jpg) center 40%/cover}
+.bg:after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,0) 35%,rgba(0,0,0,.75) 100%)}
+.title{position:fixed;top:6%;left:50%;transform:translateX(-50%);text-align:center;z-index:2}
+.title h1{display:inline-block;background:#b3261e;border:3px solid #f3e3c3;padding:10px 22px;font-size:clamp(28px,5.5vw,58px);letter-spacing:.06em;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.title p{display:inline-block;margin-top:10px;font-size:clamp(15px,2.2vw,22px);letter-spacing:.4em;padding:4px 10px 4px 16px;background:rgba(0,0,0,.6);border-radius:3px}
+.go{position:fixed;left:50%;bottom:7%;transform:translateX(-50%);display:flex;gap:18px;width:min(900px,92vw);z-index:2}
+.go button{flex:1;padding:18px 16px;border:2px solid #f3e3c3;color:#fff;text-align:left;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+.go button:first-child{background:rgba(179,38,30,.92)} .go button:last-child{background:rgba(32,52,92,.92)}
+.go b{display:block;font-size:clamp(18px,2.4vw,26px);margin-bottom:6px} .go small{font:13px/1.6 sans-serif;opacity:.92}
+@media(max-aspect-ratio:3/4){.bg{background-position:50% 30%}.go{flex-direction:column;gap:12px}}
+
+</style></head><body><div class="tag">見本 1:錦絵まるごと</div>
+<div class="bg"></div><div class="title"><h1>Sumo Manager</h1><p>親方一代</p></div><div class="go"><button data-go="real"><b>実在の部屋を選ぶ</b><small>2026 年九州場所の番付から。45 部屋・592 人の中から部屋を選び、その師匠になります。</small></button><button data-go="new"><b>新しく部屋を作る</b><small>自分で部屋を開きます。部屋の名前・親方・一門を決め、弟子 7 人から始めます。</small></button></div><div class="credit">背景:一恵斎芳幾「勧進大相撲土俵入之図」ほか(江戸〜明治の錦絵)</div>
+<script>document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>alert(b.dataset.go==='real'?'実在の部屋を選ぶ画面へ進みます(見本)':'新しい部屋を作る画面へ進みます(見本)'));</script></body></html>
