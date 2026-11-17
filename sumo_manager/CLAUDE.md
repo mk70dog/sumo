@@ -19,6 +19,7 @@
 
 ## 版ができたら毎回すること
 1. このフォルダに置く:本体 `sumo_manager_vNN.html`、`patches/patchNN.py`、新しい元データは `data/`、引き継ぎ資料の新版は `docs/`。
+   `index.html`(最新版へ飛ぶ入口)の飛び先 2 か所を新しい版に書き換える。公開 URL は https://mk70dog.github.io/sumo/sumo_manager/
 2. `main` にコミットして push する(`git push origin main`)。
 3. claude.ai のプロジェクト「sumo」に引き継ぎ資料の新版を保存し、`claude/00_再開手順.md` の「最新版」の行を更新する。
 4. ダルマさんに本体と引き継ぎ資料のファイルも送る。
