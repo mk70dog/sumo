@@ -1,0 +1,16 @@
+{
+  "name": "Sumo Manager",
+  "short_name": "Sumo Manager",
+  "id": "/sumo/",
+  "start_url": "/sumo/",
+  "scope": "/sumo/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1d1a16",
+  "theme_color": "#1d1a16",
+  "lang": "ja",
+  "icons": [
+    {"src": "/sumo/sumo_manager/img/icon180.png", "sizes": "180x180", "type": "image/png"},
+    {"src": "/sumo/sumo_manager/img/icon512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
