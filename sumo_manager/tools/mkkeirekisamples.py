@@ -112,3 +112,21 @@ S = [(1, '今の画面に「経歴」の欄を足す', '', j1), (2, '年表(歩�
 for no, t, c, j in S:
     open(OUT + 'kei%d.html' % no, 'w', encoding='utf-8').write(page(no, t, c, j))
 print('ok')
+
+# 5 タブ(kei3)の「経歴」の中身を経歴カード(kei4)にする
+j5 = r"""let tab=1;function st(n){tab=n;draw();}
+function card(p,k){return '<div class="kc" style="margin-top:0"><div class="home">'+esc(k.home||'—')+' 出身</div><div class="chips">'+(sch(k).map(s=>'<span class="chip"><i>'+s[0]+'</i>'+esc(s[1])+'</span>').join('')||'<span class="mute" style="font-size:13px">学校は分かっていません</span>')+'</div>'+
+ (k.ama.length?'<div class="amal">'+k.ama.map(a=>medal(a)+esc(a)).join('<br>')+'</div>':'')+
+ (k.fam.length?'<div class="tree"><span class="me">'+esc(p.name)+'</span>'+k.fam.map(f=>{const m=f.split(':');return '<span class="fm"><small>'+esc(m[0])+'</small>'+famLink(f).replace(/^[^:]+:/,'')+'</span>';}).join('')+'</div>':'')+srcLine(k)+'</div>';}
+function card2(p,k){return '<div class="kc" style="margin-top:0">'+(k.ama.length?'<div class="amal">'+k.ama.map(a=>medal(a)+esc(a)).join('<br>')+'</div>':'<p class="mute" style="font-size:13px">アマ時代の成績は分かっていません</p>')+(k.fam.length?'<div class="tree"><span class="me">'+esc(p.name)+'</span>'+k.fam.map(f=>{const m=f.split(':');return '<span class="fm"><small>'+esc(m[0])+'</small>'+famLink(f).replace(/^[^:]+:/,'')+'</span>';}).join('')+'</div>':'')+srcLine(k)+'</div>';}
+function body(p){const k=p.kei;let h=head(p);const T=p.kind==='力士'?['能力・状態','経歴','記録']:['部屋での役目','経歴','記録'];
+ h+='<div class="tabs">'+T.map((t,i)=>'<button class="'+(i===tab?'on':'')+'" onclick="st('+i+')">'+t+'</button>').join('')+'</div><div class="tbx">';
+ if(tab===1)h+=card(p,k);else h+='<div class="ph"></div><div class="ph" style="width:70%"></div><div class="ph" style="width:85%"></div><p class="mute kaku" style="font-size:12px">(今の画面の中身がここに入ります)</p>';
+ return h+'</div>';}"""
+# 6 名前の下に学校の札だけをいつも出し、くわしい経歴はタブの中のカードで
+j6 = j5.replace("""let h=head(p);const T""","""let h=head(p);h+='<div class="chips" style="margin:10px 0 0"><span class="chip" style="border-color:var(--shu)"><i style="background:var(--shu)">出身</i>'+esc(k.home||'—')+'</span>'+sch(k).map(s=>'<span class="chip"><i>'+s[0]+'</i>'+esc(s[1])+'</span>').join('')+'</div>';const T""")
+j6 = j6.replace("if(tab===1)h+=card(p,k);","if(tab===1)h+=card2(p,k);")
+S += [(5, 'タブ+経歴カード(kei3+kei4)', c3+c4, j5), (6, '学校の札はいつも見せる+タブの中に経歴カード', c3+c4, j6)]
+for no, t, c, j in S[4:]:
+    open(OUT + 'kei%d.html' % no, 'w', encoding='utf-8').write(page(no, t, c, j))
+print('ok')
