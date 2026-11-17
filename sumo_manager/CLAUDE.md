@@ -1,6 +1,6 @@
 # Sumo Manager の作業ルール(Claude 向け)
 
-このフォルダは、相撲部屋経営ゲーム「Sumo Manager」(単一 HTML)の置き場所です。リポジトリの直下にある `index.html`(Judge Console Hub)は別のものなので、触らないでください。
+このフォルダは、相撲部屋経営ゲーム「Sumo Manager」(単一 HTML)の置き場所です。リポジトリ直下の `index.html` は Sumo Manager の最新版へ飛ぶ入口です。`judge/`(Judge Console Hub)は別のものなので、触らないでください。
 
 ## 再開するとき
 1. `docs/` の中で番号がいちばん大きい引き継ぎ資料(`SumoManager_Handoff_*_vN.md`)を読む。claude.ai のプロジェクト「sumo」にも同じ資料と `claude/00_再開手順.md` がある。
@@ -19,7 +19,7 @@
 
 ## 版ができたら毎回すること
 1. このフォルダに置く:本体 `sumo_manager_vNN.html`、`patches/patchNN.py`、新しい元データは `data/`、引き継ぎ資料の新版は `docs/`。
-   `index.html`(最新版へ飛ぶ入口)の飛び先 2 か所を新しい版に書き換える。公開 URL は https://mk70dog.github.io/sumo/sumo_manager/
+   入口の飛び先を新しい版に書き換える(リポジトリ直下の `index.html` とこのフォルダの `index.html`、それぞれ 2 か所)。公開 URL は https://mk70dog.github.io/sumo/
 2. `main` にコミットして push する(`git push origin main`)。
 3. claude.ai のプロジェクト「sumo」に引き継ぎ資料の新版を保存し、`claude/00_再開手順.md` の「最新版」の行を更新する。
 4. ダルマさんに本体と引き継ぎ資料のファイルも送る。

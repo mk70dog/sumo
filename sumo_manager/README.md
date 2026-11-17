@@ -2,7 +2,7 @@
 
 単一の HTML ファイルで動く、相撲部屋の経営ゲームです。
 
-**遊ぶ:https://mk70dog.github.io/sumo/sumo_manager/** (いつも最新版が開きます)
+**遊ぶ:https://mk70dog.github.io/sumo/** (いつも最新版が開きます)
 ブラウザで `sumo_manager_vNN.html`(番号がいちばん大きいもの)を開けば遊べます。保存はブラウザの中(localStorage)に残ります。
 
 ## フォルダ

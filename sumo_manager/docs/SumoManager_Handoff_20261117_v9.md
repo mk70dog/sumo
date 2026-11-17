@@ -203,7 +203,7 @@
 
 ## 8. GitHub と再開の手順
 
-- リポジトリ:https://github.com/mk70dog/sumo の `sumo_manager/` フォルダ(直下の `index.html` は別物の Judge Console Hub なので触らない)。
+- リポジトリ:https://github.com/mk70dog/sumo の `sumo_manager/` フォルダ。公開ページ https://mk70dog.github.io/sumo/ (直下の `index.html`)は最新版へ飛ぶ入口。もとのトップにあった Judge Console Hub は `judge/` に移した(別物なので触らない)。
   - 本体 `sumo_manager_vNN.html`、`docs/` 引き継ぎ資料、`data/` 元データ、`patches/` パッチ(v13〜)、`tests/` 自動テスト、`CLAUDE.md` 作業ルール、`README.md`。
   - Claude の GitHub アプリに `mk70dog/sumo` の書き込みを許可済み(2026-11-17)。
 - 版ができたら毎回:`sumo_manager/` に置いて `main` に push → プロジェクト「sumo」に引き継ぎ資料を保存 → `claude/00_再開手順.md` の「最新版」を更新 → ダルマさんにもファイルを送る。
