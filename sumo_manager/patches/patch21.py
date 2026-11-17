@@ -1,4 +1,5 @@
 # 年寄 103 人・裏方・力士の初土俵と最高位・部屋の資金力と後援会  v17 -> v18
+import os
 import sys, json
 src, dst = sys.argv[1], sys.argv[2]
 s = open(src, encoding='utf-8').read()
@@ -9,7 +10,7 @@ def rep(old, new, n=1):
         raise SystemExit('一致数 %d (期待 %d): %r' % (c, n, old[:90]))
     s = s.replace(old, new)
 
-D = '/home/claude/data/'
+D = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data') + os.sep
 TOSHI = [l.split(',') for l in open(D + 'toshiyori2026.csv', encoding='utf-8').read().strip().split('\n')]
 assert len(TOSHI) == 103
 TOSHI_JS = json.dumps([[r[0], r[1], r[2].replace('部屋', ''), 1 if r[3] == '師匠' else 0, r[4], r[5], r[6], r[7], r[8]] for r in TOSHI], ensure_ascii=False)

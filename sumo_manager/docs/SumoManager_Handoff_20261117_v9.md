@@ -198,3 +198,13 @@
 - 画面テストは Playwright(Chromium)。
 - 主な関数:`newGame` / `newGameReal`、`doWeek`(`aniAssign` → 稽古 → `shiteiWeek`)/ `weekR` / `bodyWeek`、`startBasho` / `advanceDay` / `fight`、場所後(`v7Basho` → `v8Basho` → `payBasho` → `v12Basho` → `v13Basho` → `v14Basho` → `v15Basho` → `amaBasho` → `retireCheck` → `genEvents`)、`nextCycle` / `computeBanzuke` / `kyuFloor`、`migrate`。
 - 出来事は `EVT` にまとめてある。番付発表のあとの出来事(化粧廻し・綱打ち・改名)は稽古期間の画面に出し、初日までに答えなければ自動で決まる。
+
+---
+
+## 8. GitHub と再開の手順
+
+- リポジトリ:https://github.com/mk70dog/sumo の `sumo_manager/` フォルダ(直下の `index.html` は別物の Judge Console Hub なので触らない)。
+  - 本体 `sumo_manager_vNN.html`、`docs/` 引き継ぎ資料、`data/` 元データ、`patches/` パッチ(v13〜)、`tests/` 自動テスト、`CLAUDE.md` 作業ルール、`README.md`。
+  - Claude の GitHub アプリに `mk70dog/sumo` の書き込みを許可済み(2026-11-17)。
+- 版ができたら毎回:`sumo_manager/` に置いて `main` に push → プロジェクト「sumo」に引き継ぎ資料を保存 → `claude/00_再開手順.md` の「最新版」を更新 → ダルマさんにもファイルを送る。
+- 別のチャットで再開:プロジェクト「sumo」の中で新しいチャットを開き「続き」と送る。Claude は `claude/00_再開手順.md` と最新の引き継ぎ資料を読み、リポジトリを取ってきて(`git clone --depth 1 https://github.com/mk70dog/sumo`)最新版から作業する。HTML を添付しなくてよい。
