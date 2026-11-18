@@ -3,7 +3,7 @@
 function dhType(k){k=k||'';if(/うっちゃり|打っ棄り/.test(k))return 'uchari';if(/投げ|捻り|ひねり|掬い|すくい|網打ち|櫓|小股/.test(k))return 'nage';if(/送り/.test(k))return 'okuri';if(/はたき|叩き|引き落とし|引っ掛け|肩透かし|突き落とし|とったり/.test(k))return 'hiki';if(/突き出し|突き倒し|押し出し|押し倒し/.test(k))return 'oshi';if(/倒れ|浴びせ/.test(k))return 'taoshi';return 'yori';}
 function dhRand(seed){let s=seed>>>0||1;return ()=>{s=(s*1103515245+12345)>>>0;return (s>>>8)/16777216;};}
 /* P の各点:[t, cx, cy, d(2人の間の半分), 構え('tachi'|'yotsu'|'oshi'), 誰が押しているか(1=勝つ側,-1=負ける側,0)] */
-function dhPlan(k,winE,seed,nE,nW){let sd=1;const rnd=dhRand(seed),T=dhType(k);const sg=winE?1:-1;const ang=(rnd()-.5)*1.3;const dir=[Math.cos(ang)*sg,Math.sin(ang)];
+function dhPlan(k,winE,seed,nE,nW){let sd=1,uchi=false;const rnd=dhRand(seed),T=dhType(k);const sg=winE?1:-1;const ang=(rnd()-.5)*1.3;const dir=[Math.cos(ang)*sg,Math.sin(ang)];
  const WN=winE?nE:nW,LN=winE?nW:nE;const P=[],ph=[];const st=T==='oshi'||(T==='hiki'&&rnd()<.6)?'oshi':'yotsu';
  const DD=st==='oshi'?.25:.2;const at=(f,a)=>[dir[0]*f-dir[1]*a,dir[1]*f+dir[0]*a];/* f=勝つ側が押す向き、a=横 */
  P.push([0,0,0,.36,'tachi',0]);ph.push([0,'仕切り。両者、手をついた']);
@@ -19,18 +19,24 @@ function dhPlan(k,winE,seed,nE,nW){let sd=1;const rnd=dhRand(seed),T=dhType(k);c
  /* 決着 */
  let out,how='出た';const L=P[P.length-1];const t0=L[0];const fin=Math.max(t0+.12,.82);
  if(T==='uchari'){const e=at(-.9,(rnd()-.5)*.4);P.push([fin,e[0],e[1],DD,st,-1]);ph.push([t0+.04,LN+'が一気に寄る!']);ph.push([fin-.03,WN+'、俵の上で体を入れ替えた!']);out=at(-1.36,(rnd()<.5?1:-1)*.35);ph.push([.97,k+'!'+WN+'の大逆転']);}
- else if(T==='nage'){P.push([fin,L[1],L[2],DD,st,1]);ph.push([t0+.04,WN+'、上手を引いた']);ph.push([fin-.03,'振った!']);const piv=[L[1],L[2]];sd=rnd()<.5?1:-1;const ra=Math.atan2(dir[1],dir[0])+sd*2.3;out=[piv[0]+Math.cos(ra)*.62,piv[1]+Math.sin(ra)*.62];how='倒れた';ph.push([.97,k+'!'+WN+'の勝ち']);}
- else if(T==='hiki'){P.push([fin,L[1],L[2],.12,st,-1]);ph.push([t0+.04,LN+'が前に出る']);ph.push([fin-.03,WN+'、引いた!']);out=[L[1]-dir[0]*.5+dir[1]*.15,L[2]-dir[1]*.5-dir[0]*.15];how='落ちた';ph.push([.97,k+'!'+WN+'の勝ち']);}
+ else if(T==='nage'){P.push([fin,L[1],L[2],DD,st,1]);ph.push([t0+.04,WN+'、上手を引いた']);ph.push([fin-.03,'振った!']);const piv=[L[1],L[2]];sd=rnd()<.5?1:-1;uchi=rnd()<.6;if(uchi){ph.splice(ph.length-1,1);ph.push([fin+.01,'投げの打ち合い!']);ph.push([fin+.05,WN+'が振り切った!']);}const ra=Math.atan2(dir[1],dir[0])+sd*2.3;out=[piv[0]+Math.cos(ra)*.62,piv[1]+Math.sin(ra)*.62];how='倒れた';ph.push([.97,k+'!'+WN+'の勝ち']);}
+ else if(T==='hiki'){sd=rnd()<.5?1:-1;const ch=[L[1]-dir[0]*.22,L[2]-dir[1]*.22];P.push([fin,ch[0],ch[1],DD,'oshi',-1]);ph.push([t0+.04,LN+'が頭を下げて一気に前へ!']);ph.push([fin+.01,WN+'、体を開いてはたいた!']);out=[ch[0]-dir[0]*.62,ch[1]-dir[1]*.62];how='落ちた';ph.push([.97,k+'!'+LN+'がばったり']);}
  else{const e=at(.93,(rnd()-.5)*.5);P.push([fin,e[0],e[1],T==='oshi'?.17:.11,T==='okuri'?'yotsu':st,1]);ph.push([t0+.04,T==='okuri'?WN+'が後ろに回った!':T==='oshi'?WN+'が一気に突き放す!':WN+'が寄って出る!']);ph.push([fin-.04,LN+'、俵に足が…']);out=at(1.4,(rnd()-.5)*.3);if(T==='taoshi')how='倒れた';ph.push([.97,k+'!'+WN+'の勝ち']);}
- return {P,out,how,T,winE,dir,ph,k,WN,LN,fin,sd};}
+ return {P,out,how,T,winE,dir,ph,k,WN,LN,fin,sd,uchi};}
 function dhAt(pl,t){const P=pl.P;let i=0;while(i<P.length-1&&P[i+1][0]<=t)i++;const a=P[i],b=P[Math.min(i+1,P.length-1)];const u=b[0]>a[0]?Math.min(1,Math.max(0,(t-a[0])/(b[0]-a[0]))):1;const e=u*u*(3-2*u);
  const cx=a[1]+(b[1]-a[1])*e,cy=a[2]+(b[2]-a[2])*e,d=a[3]+(b[3]-a[3])*e;const dx=pl.dir[0],dy=pl.dir[1];
  let W=[cx-dx*d,cy-dy*d],Lo=[cx+dx*d,cy+dy*d];let stance=(e<.5?a:b)[4],push=(e<.5?a:b)[5],fall=0;
  const lastT=P[P.length-1][0];
  let spin=0,flip=1,air=0;
- if(t>lastT&&pl.T==='nage'){const u2=Math.min(1,(t-lastT)/(1-lastT));const e2=u2<.75?u2/.75:1;const piv=W;const a0=Math.atan2(Lo[1]-piv[1],Lo[0]-piv[0]),a1=Math.atan2(pl.out[1]-piv[1],pl.out[0]-piv[0]);let da=a1-a0;if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;const ee=e2*e2*(3-2*e2);const rr=Math.hypot(Lo[0]-piv[0],Lo[1]-piv[1])+(Math.hypot(pl.out[0]-piv[0],pl.out[1]-piv[1])-Math.hypot(Lo[0]-piv[0],Lo[1]-piv[1]))*ee;const aa=a0+da*ee;Lo=[piv[0]+Math.cos(aa)*rr,piv[1]+Math.sin(aa)*rr];spin=pl.sd*90*ee;flip=1;air=u2<.75?Math.sin(Math.PI*e2):0;fall=ee;stance='free';const r0=pl.winE?{E:W,W:Lo}:{E:Lo,W:W};return Object.assign(r0,{stance,push:0,fall:0,lose:pl.winE?'W':'E',spin,flip,air,land:u2>=.75});}
+ if(t>lastT&&pl.T==='hiki'){const u2=Math.min(1,(t-lastT)/(1-lastT));const pv=[-dy*pl.sd,dx*pl.sd];const es=Math.min(1,u2/.3);const s2=es*es*(3-2*es);W=[W[0]+pv[0]*.32*s2+dx*.04*s2,W[1]+pv[1]*.32*s2+dy*.04*s2];
+  const em=Math.min(1,u2/.75);const m2=em*em*(3-2*em);const L0=Lo;Lo=[L0[0]+(pl.out[0]-L0[0])*m2,L0[1]+(pl.out[1]-L0[1])*m2];const sp=Math.max(0,Math.min(1,(u2-.35)/.4));spin=pl.sd*90*sp*sp*(3-2*sp);
+  const r0=pl.winE?{E:W,W:Lo}:{E:Lo,W:W};return Object.assign(r0,{stance:'hataki',push:0,fall:0,lose:pl.winE?'W':'E',spin,flip:1,air:0,land:u2>=.75,slap:u2>.18&&u2<.5});}
+ if(t>lastT&&pl.T==='nage'){let u2=Math.min(1,(t-lastT)/(1-lastT));let uc=0;if(pl.uchi){const ue=Math.min(1,u2/.45);uc=ue;const mid=[(W[0]+Lo[0])/2,(W[1]+Lo[1])/2];const an=pl.sd*3.6*ue*ue*(3-2*ue);const R=(v)=>[mid[0]+(v[0]-mid[0])*Math.cos(an)-(v[1]-mid[1])*Math.sin(an),mid[1]+(v[0]-mid[0])*Math.sin(an)+(v[1]-mid[1])*Math.cos(an)];const W0=W;W=R(W);Lo=R(Lo);const oo=R([pl.out[0]-W0[0]+W0[0],pl.out[1]-W0[1]+W0[1]]);
+   if(u2<.45){const r0=pl.winE?{E:W,W:Lo}:{E:Lo,W:W};return Object.assign(r0,{stance:'yotsu',push:0,fall:0,lose:pl.winE?'W':'E',spin:0,flip:1,air:0,uchi:1});}
+   u2=(u2-.45)/.55;var OUT=oo;}
+  const OT=typeof OUT!=='undefined'?OUT:pl.out;const e2=u2<.75?u2/.75:1;const piv=W;const a0=Math.atan2(Lo[1]-piv[1],Lo[0]-piv[0]),a1=Math.atan2(OT[1]-piv[1],OT[0]-piv[0]);let da=a1-a0;if(da>Math.PI)da-=2*Math.PI;if(da<-Math.PI)da+=2*Math.PI;const ee=e2*e2*(3-2*e2);const rr=Math.hypot(Lo[0]-piv[0],Lo[1]-piv[1])+(Math.hypot(OT[0]-piv[0],OT[1]-piv[1])-Math.hypot(Lo[0]-piv[0],Lo[1]-piv[1]))*ee;const aa=a0+da*ee;Lo=[piv[0]+Math.cos(aa)*rr,piv[1]+Math.sin(aa)*rr];spin=pl.sd*90*ee;flip=1;air=u2<.75?Math.sin(Math.PI*e2):0;fall=ee;stance='free';const r0=pl.winE?{E:W,W:Lo}:{E:Lo,W:W};return Object.assign(r0,{stance,push:0,fall:0,lose:pl.winE?'W':'E',spin,flip,air,land:u2>=.75});}
  if(t>lastT){const u2=Math.min(1,(t-lastT)/(1-lastT));const e2=1-Math.pow(1-u2,3);fall=e2;Lo=[Lo[0]+(pl.out[0]-Lo[0])*e2,Lo[1]+(pl.out[1]-Lo[1])*e2];
-  if(pl.T==='hiki')W=[W[0]+dy*.15*e2,W[1]-dx*.15*e2];else if(pl.T!=='nage'){W=[W[0]+(pl.out[0]-W[0])*.2*e2,W[1]+(pl.out[1]-W[1])*.2*e2];const rw=Math.hypot(W[0],W[1]);if(rw>.9){W=[W[0]*.9/rw,W[1]*.9/rw];}}stance=pl.T==='oshi'?'oshi':'free';}
+  if(pl.T!=='nage'){W=[W[0]+(pl.out[0]-W[0])*.2*e2,W[1]+(pl.out[1]-W[1])*.2*e2];const rw=Math.hypot(W[0],W[1]);if(rw>.9){W=[W[0]*.9/rw,W[1]*.9/rw];}}stance=pl.T==='oshi'?'oshi':'free';}
  return pl.winE?{E:W,W:Lo,stance,push:push*(1),fall,lose:'W'}:{E:Lo,W:W,stance,push:-push,fall,lose:'E'};}
 
 /* 四角の力士(B):体重で大きさ。背中側にまわしの色の帯。 */
@@ -57,12 +63,13 @@ function dhPose(g,p,q,stance,ph,pushing,fallen,fx){const S=135;const h=+g.datase
  if(stance==='tachi'){h1=[h+7,-h*.55];h2=[h+7,h*.55];}
  else if(stance==='oshi'){const r1=Math.max(0,Math.sin(ph*14)),r2=Math.max(0,Math.sin(ph*14+Math.PI));ext=[r1,r2];const L=Math.max(h+6,dist-h*.9);h1=[h+6+r1*(L-h-6),-h*.45];h2=[h+6+r2*(L-h-6),h*.45];}
  else if(stance==='yotsu'){const L=Math.min(dist*.8,h*2.2);h1=[L,-h-6];h2=[L,h+6];}
+ else if(stance==='hataki'&&fx.slapper){const L=Math.max(h+8,dist*.85);h1=[L,-h*.25];h2=[L,h*.25];ext=[1,1];}
  else{h1=[h,-h-10];h2=[h,h+10];}
  const a1=g.querySelector('.a1'),a2=g.querySelector('.a2');a1.setAttribute('x1',h*.3);a1.setAttribute('y1',-h*.75);a1.setAttribute('x2',h1[0]);a1.setAttribute('y2',h1[1]);a2.setAttribute('x1',h*.3);a2.setAttribute('y1',h*.75);a2.setAttribute('x2',h2[0]);a2.setAttribute('y2',h2[1]);
  const c1=g.querySelector('.h1'),c2=g.querySelector('.h2');c1.setAttribute('cx',h1[0]);c1.setAttribute('cy',h1[1]);c2.setAttribute('cx',h2[0]);c2.setAttribute('cy',h2[1]);
  /* 色の変化 */
  const heat=fx.heat||0;const au=g.querySelector('.aura');au.setAttribute('opacity',heat>.55?((heat-.55)/.45*(.6+.4*Math.sin(ph*9))).toFixed(2):0);
- const hit1=stance==='oshi'&&ext[0]>.92&&fx.burst,hit2=stance==='oshi'&&ext[1]>.92&&fx.burst;
+ const hit1=(stance==='oshi'&&ext[0]>.92&&fx.burst)||(fx.slapper&&fx.slap),hit2=(stance==='oshi'&&ext[1]>.92&&fx.burst)||(fx.slapper&&fx.slap);
  const gc=fx.grip&&stance==='yotsu';
  [[c1,hit1],[c2,hit2]].forEach(([c,hit],i)=>{c.setAttribute('fill',hit?'#ffe14a':gc?'#e0a82e':'#f0c998');c.setAttribute('stroke',hit?'#ff7a00':gc?'#8a5a00':'#5a3a1a');c.setAttribute('stroke-width',hit||gc?3:1.5);});
  const bs=g.querySelector('.bst');if(hit1||hit2){const hp=hit1?h1:h2;bs.innerHTML='<path d="M0,-11 L3,-3 L11,-3 L5,2 L8,10 L0,5 L-8,10 L-5,2 L-11,-3 L-3,-3Z" fill="#ffe14a" stroke="#ff7a00" stroke-width="1.5" transform="translate('+(hp[0]+9)+','+hp[1]+')"/>';bs.setAttribute('opacity',1);}else bs.setAttribute('opacity',0);
@@ -77,7 +84,7 @@ function dhPlay(id,pl,phEl,dur){const sv=document.getElementById(id);if(!sv)retu
  let pt=0,last=null,lastPh=-1,hit=0;if(sv._raf)cancelAnimationFrame(sv._raf);
  const step=ts=>{const dt=last===null?0:Math.min(50,ts-last);last=ts;
   const p0=dhAt(pl,pt);const rmax=Math.max(Math.hypot(p0.E[0],p0.E[1]),Math.hypot(p0.W[0],p0.W[1]));
-  let sp=1;if(rmax>.72)sp=.5;if(pt>pl.fin-.05&&pt<pl.fin+.01)sp=.25;else if(pl.T==='nage'&&pt>=pl.fin+.01)sp=.55;else if(pt>=pl.fin&&pt<pl.fin+.06)sp=.25;if(pt<.1)sp=.8;
+  let sp=1;if(rmax>.72)sp=.5;if(rmax>.8&&pt<pl.fin)sp=.32;if(pt>pl.fin-.05&&pt<pl.fin+.01)sp=.25;else if((pl.T==='nage'||pl.T==='hiki')&&pt>=pl.fin+.01)sp=.55;else if(pt>=pl.fin&&pt<pl.fin+.06)sp=.25;if(pt<.1)sp=.8;
   const ppt=pt;pt=Math.min(1,pt+dt/dur*sp);const p=dhAt(pl,pt);
   /* 調子:前に出ている側が上がり、下がっている側が下がる */
   const cx=(p.E[0]+p.W[0])/2,cy=(p.E[1]+p.W[1])/2;const pc=dhAt(pl,ppt);const mv=((cx-(pc.E[0]+pc.W[0])/2)*pl.dir[0]+(cy-(pc.E[1]+pc.W[1])/2)*pl.dir[1])*(pl.winE?1:-1);/* 東が前へ出た量 */
@@ -88,7 +95,10 @@ function dhPlay(id,pl,phEl,dur){const sv=document.getElementById(id);if(!sv)retu
   if(ts-tagT.E>1500)fxE.tag='';if(ts-tagT.W>1500)fxW.tag='';
   if(fxE.heat>.7&&!fxE.hot){fxE.hot=1;fxE.tag='勢いに乗った!';tagT.E=ts;}if(fxW.heat>.7&&!fxW.hot){fxW.hot=1;fxW.tag='勢いに乗った!';tagT.W=ts;}
   fxE.burst=p.push>=0;fxW.burst=p.push<=0;
-  const lf=p.lose==='E'?fxE:fxW;lf.sd=pl.sd||1;if(p.spin!==undefined){lf.spin=p.spin;lf.flip=p.flip;lf.air=p.air;if(p.air>.1)lf.tag='';}
+  const lf=p.lose==='E'?fxE:fxW,wf=p.lose==='E'?fxW:fxE;lf.sd=pl.sd||1;wf.slapper=p.stance==='hataki';wf.slap=!!p.slap;if(p.slap&&!wf.slapT){wf.slapT=1;wf.tag='はたいた!';(p.lose==='E'?tagT.W=ts:tagT.E=ts);}
+  if(p.uchi&&!fxE.uc){fxE.uc=fxW.uc=1;fxE.tag=fxW.tag='投げの打ち合い!';tagT.E=tagT.W=ts;wr.classList.remove('shake');void wr.offsetWidth;wr.classList.add('shake');setTimeout(()=>wr.classList.remove('shake'),300);}
+  /* 土俵際の粘り:俵に近いほうが小きざみにふんばる */
+  const nE=Math.hypot(p.E[0],p.E[1]),nW=Math.hypot(p.W[0],p.W[1]);if(Math.max(nE,nW)>.78&&pt<pl.fin){const near=nE>nW?'E':'W';const v=near==='E'?p.E:p.W;const j=.018*Math.sin(ts/38);const rr=Math.max(nE,nW);v[0]+=v[0]/rr*j;v[1]+=v[1]/rr*j;const nf=near==='E'?fxE:fxW;if(!nf.neb||ts-nf.neb>2500){nf.neb=ts;nf.tag='俵で粘る!';near==='E'?tagT.E=ts:tagT.W=ts;}}if(p.spin!==undefined){lf.spin=p.spin;lf.flip=p.flip;lf.air=p.air;if(p.air>.1)lf.tag='';}
   if(p.land&&!sv._landed){sv._landed=1;wr.classList.remove('shake');void wr.offsetWidth;wr.classList.add('shake');const lo=p.lose==='E'?p.E:p.W;const du=q('.dust');du.setAttribute('transform','translate('+(lo[0]*S)+','+(lo[1]*S)+')');du.classList.remove('go');void du.getBoundingClientRect();du.classList.add('go');setTimeout(()=>wr.classList.remove('shake'),300);}
   dhPose(ge,p.E,p.W,p.stance,pt*dur/1000,p.push>0,p.lose==='E'?p.fall:0,fxE);dhPose(gw,p.W,p.E,p.stance,pt*dur/1000+.5,p.push<0,p.lose==='W'?p.fall:0,fxW);
   const adv=(cx*pl.dir[0]+cy*pl.dir[1])*(pl.winE?1:-1);bar.style.width=(50+Math.max(-48,Math.min(48,adv*55)))+'%';
