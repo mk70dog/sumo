@@ -14,7 +14,12 @@ def apply(s, v):
            "const fl=gy.querySelector('.gfl');fl.style.animation='none';void fl.getBBox();fl.style.animation='gfl .9s ease-out 3';"
            "const dist=Math.hypot(wv[0]-gp[0],wv[1]-gp[1])*S/1.3;const ln=gy.querySelector('.gpt');ln.setAttribute('x2',Math.max(24,dist-30).toFixed(0));ln.setAttribute('transform','rotate('+ga.toFixed(1)+')');ln.setAttribute('opacity',.9);"
            "const gt=gy.querySelector('.gyt');gt.textContent=pl.WN+'!';gt.setAttribute('font-size',17);gt.setAttribute('opacity',1);gt.setAttribute('fill',pl.winE?'#b5361f':'#2d4d7a');gt.setAttribute('y',gp[1]<0?-34:40);}")
-    rep("gb.setAttribute('transform','translate(26,0)');gy.querySelector('.gyt').textContent='勝負あり!';", fin)
+    if "gy.querySelector('.gyt').classList.add('fin');" in s:
+        # v62 以降(nb66/sh67 のあと):土俵の中に名前は出さない。勝負ありの縦書きはそのまま
+        fin2 = fin[:fin.index("const gt=gy")] + "}"
+        rep("gb.setAttribute('transform','translate(26,0)');gy.querySelector('.gyt').classList.add('fin');", fin2 + "gy.querySelector('.gyt').classList.add('fin');")
+    else:
+        rep("gb.setAttribute('transform','translate(26,0)');gy.querySelector('.gyt').textContent='勝負あり!';", fin)
     # はじめに戻す
     rep("wr.classList.remove('cheer','roar');", "wr.classList.remove('cheer','roar','late','wave','stand');{const ln=sv.querySelector('.gpt');if(ln)ln.setAttribute('opacity',0);const gb0=sv.querySelector('.gb');if(gb0)gb0.setAttribute('transform','translate(16,-14)');sv.querySelectorAll('.bub,.zab').forEach(e=>e.remove());}")
     # 終盤(後半・土俵際)は観客がだんだんざわつく
