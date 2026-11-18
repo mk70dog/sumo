@@ -4,6 +4,7 @@ const fs=require('fs'),vm=require('vm');
 const [,,file,yS,sS,bz]=process.argv;const yrs=+yS||20;let seed=+sS||1;const rnd=()=>{seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
 const html=fs.readFileSync(file,'utf8');let code=html.slice(html.indexOf("'use strict';"),html.indexOf('/* ========== 画面'));
 if(bz)code=code.replace(/const BZ=\{[^}]*\};/,'const BZ={'+bz+'};');
+const ozb=process.argv[6];if(ozb!=null)code=code.replace('r.cap[k]+.15*R(.5,1.5)','r.cap[k]+'+ozb+'*R(.5,1.5)');
 const store={};const ctx={console,Math:Object.create(Math),localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v;},removeItem:k=>{delete store[k];}},document:{documentElement:{style:{setProperty(){}}},querySelector:()=>null,getElementById:()=>null},setTimeout:()=>0,clearTimeout:()=>0};
 ctx.Math.random=rnd;vm.createContext(ctx);vm.runInContext(code+';globalThis.__get=()=>G;',ctx);
 const C=ctx;C.newGameReal('高田川');const T={};const A={yu:{Y:0,O:0,SK:0,M:0},n:0,po:0,kin:0,ybs:0,yw:[],ow:[],sw:[]};
