@@ -21,14 +21,14 @@ rep("const APPV=40;\nconst SAVE='sumoManager40',SAVE39", "const APPV=41;\nconst 
 rep('[SAVE39,SAVE38', '[SAVE40,SAVE39,SAVE38')
 rep(" if(g.v===39){g.v=40;}\n return g.v===40?g:null;}", " if(g.v===39){g.v=40;}\n if(g.v===40){g.v=41;}\n return g.v===41?g:null;}")
 rep('G={v:40,', 'G={v:41,')
-rep("function heyaSheet(n){",
+rep("function newGameReal(hn,oyTsel){",
     "const FACV={'二所ノ関':{keiko:3,shuku:5,bld:'own'},'伊勢ヶ濱':{keiko:1,bld:'rent'},'中村':{shoku:3,iryo:2,bld:'rent'},'音羽山':{bld:'rent'},'押尾川':{bld:'rent'},'秀ノ山':{bld:'own'},'時津風':{bld:'own'}};\n"
     "function realFac(n,sek,cnt,fr,age){const ri=fr==='S'||fr==='A';const f={keiko:Math.min(5,1+(sek>=3?1:0)+(sek>=6?1:0)),iryo:ri?2:1,shoku:ri?2:1,shuku:Math.min(5,Math.max(2,Math.ceil((cnt-4)/3)))};let b=(age||40)>=50?'own':'rent';const v=FACV[n];if(v){for(const k in v)if(k!=='bld')f[k]=v[k];if(v.bld)b=v.bld;}return {f:f,b:b,src:!!v};}\n"
-    "function heyaSheet(n){")
+    "function newGameReal(hn,oyTsel){")
 rep("(x.loc?'<dt>場所</dt><dd>'+esc(x.loc)+'</dd>':'')",
     "(()=>{const q=realFac(x.n,x.sk,x.c,x.fr,x.age);return '<dt>施設</dt><dd>稽古場 '+q.f.keiko+'・医務室 '+q.f.iryo+'・食堂 '+q.f.shoku+'・宿舎 '+q.f.shuku+' / '+(q.b==='own'?'持ち家':'借りもの')+(q.src?'(資料あり)':'(推定)')+'</dd>';})()+(x.loc?'<dt>場所</dt><dd>'+esc(x.loc)+'</dd>':'')")
 rep("G.fac.shuku=3;G.capB=Math.max(0,o.length+3-(4+3*G.fac.shuku));",
-    "const hl0=heyaList().find(x=>x.n===hn)||{fr:'B'};const rf=realFac(hn,sek,o.length,hl0.fr,me().age);G.fac=Object.assign({},rf.f);G.capB=Math.max(0,o.length+3-(4+3*G.fac.shuku));")
+    "const hl0=(typeof heyaList==='function'?heyaList().find(x=>x.n===hn):null)||{fr:'B'};const rf=realFac(hn,sek,o.length,hl0.fr,me().age);G.fac=Object.assign({},rf.f);G.capB=Math.max(0,o.length+3-(4+3*G.fac.shuku));")
 rep("G.bld={k:(me().age||40)>=50?'own':'rent'};", "G.bld={k:rf.b};")
 open(dst, 'w', encoding='utf-8').write(s)
 print('ok')

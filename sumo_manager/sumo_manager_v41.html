@@ -1907,6 +1907,8 @@ const REALB=["Y|大の里|石川県|二所ノ関|2000-06-07|192|191", "Y|豊昇�
 const REALH=[["伊勢ヶ濱", 4, "照ノ富士", 34, "Y", "四", ""], ["境川", 0, "両国", 64, "", "四", ""], ["二所ノ関", 1, "稀勢の里", 40, "Y", "四", ""], ["玉ノ井", 0, "栃東", 50, "O", "技", ""], ["高砂", 3, "朝赤龍", 45, "", "四", "朝"], ["高田川", 1, "安芸乃島", 59, "", "四", ""], ["木瀬", 0, "肥後ノ海", 57, "", "四", ""], ["九重", 3, "千代大海", 50, "O", "押", "千代"], ["追手風", 2, "大翔山", 60, "", "押", "大"], ["二子山", 0, "雅山", 49, "O", "押", ""], ["時津風", 2, "土佐豊", 41, "", "四", ""], ["荒汐", 2, "蒼国来", 42, "", "四", ""], ["田子ノ浦", 1, "隆の鶴", 49, "", "四", ""], ["武蔵川", 0, "武蔵丸", 55, "Y", "押", ""], ["春日野", 0, "栃乃和歌", 64, "", "四", "栃"], ["佐渡ヶ嶽", 1, "琴ノ若", 58, "", "四", "琴"], ["立浪", 0, "旭豊", 58, "", "四", ""], ["出羽海", 0, "小城ノ花", 59, "", "四", ""], ["鳴戸", 1, "琴欧洲", 43, "O", "四", "欧勝"], ["山響", 0, "巌雄", 56, "", "四", ""], ["藤島", 0, "武双山", 54, "O", "押", ""], ["尾上", 0, "濱ノ嶋", 56, "", "四", ""], ["伊勢ノ海", 2, "北勝鬨", 60, "", "押", ""], ["音羽山", 2, "鶴竜", 41, "Y", "技", ""], ["阿武松", 1, "大道", 45, "", "四", ""], ["錣山", 1, "豊真将", 45, "", "四", ""], ["浅香山", 4, "魁皇", 54, "O", "四", ""], ["武隈", 0, "豪栄道", 40, "O", "技", ""], ["放駒", 1, "玉乃島", 49, "", "四", ""], ["押尾川", 1, "豪風", 47, "", "押", ""], ["八角", 3, "北勝海", 63, "Y", "押", "北勝"], ["雷", 0, "垣添", 48, "", "四", "雷"], ["大島", 4, "旭天鵬", 52, "", "四", "旭"], ["湊川", 1, "貴景勝", 30, "O", "押", ""], ["湊", 1, "湊富士", 58, "", "四", ""], ["安治川", 4, "安美錦", 48, "", "技", "安"], ["中村", 1, "嘉風", 44, "", "技", ""], ["秀ノ山", 1, "琴奨菊", 42, "O", "四", ""], ["式秀", 0, "北桜", 55, "", "四", ""], ["大嶽", 1, "玉飛鳥", 44, "", "四", ""], ["西岩", 1, "若の里", 50, "", "四", ""], ["朝日山", 4, "琴錦", 58, "", "技", ""], ["芝田山", 1, "大乃国", 64, "Y", "四", ""], ["片男波", 1, "玉春日", 54, "", "四", ""], ["錦戸", 3, "水戸泉", 64, "", "四", ""]];
 function realAge(bd){const p=bd.split('-').map(Number);return (Date.UTC(2026,10,16)-Date.UTC(p[0],p[1]-1,p[2]))/31557600000;}
 function realHeyaInfo(){const c={},sk={};REALB.forEach((l,i)=>{const h=l.split('|')[3];c[h]=(c[h]||0)+1;if(i<70)sk[h]=(sk[h]||0)+1;});return {c:c,sk:sk};}
+const FACV={'二所ノ関':{keiko:3,shuku:5,bld:'own'},'伊勢ヶ濱':{keiko:1,bld:'rent'},'中村':{shoku:3,iryo:2,bld:'rent'},'音羽山':{bld:'rent'},'押尾川':{bld:'rent'},'秀ノ山':{bld:'own'},'時津風':{bld:'own'}};
+function realFac(n,sek,cnt,fr,age){const ri=fr==='S'||fr==='A';const f={keiko:Math.min(5,1+(sek>=3?1:0)+(sek>=6?1:0)),iryo:ri?2:1,shoku:ri?2:1,shuku:Math.min(5,Math.max(2,Math.ceil((cnt-4)/3)))};let b=(age||40)>=50?'own':'rent';const v=FACV[n];if(v){for(const k in v)if(k!=='bld')f[k]=v[k];if(v.bld)b=v.bld;}return {f:f,b:b,src:!!v};}
 function newGameReal(hn,oyTsel){
  const H=REALH.find(x=>x[0]===hn)||REALH[0];
  newGame(H[0],H[0]+'(元・'+H[2]+')',H[6],oyTsel||H[5],H[1],H[3]);
@@ -1933,7 +1935,7 @@ function newGameReal(hn,oyTsel){
   G.names[r.n]=1;G.R[r.id]=r;G.order.push(r.id);});
  buildRanks();
  const o=own();const sek=o.filter(r=>r.d<=1).length;
- const hl0=heyaList().find(x=>x.n===hn)||{fr:'B'};const rf=realFac(hn,sek,o.length,hl0.fr,me().age);G.fac=Object.assign({},rf.f);G.capB=Math.max(0,o.length+3-(4+3*G.fac.shuku));
+ const hl0=(typeof heyaList==='function'?heyaList().find(x=>x.n===hn):null)||{fr:'B'};const rf=realFac(hn,sek,o.length,hl0.fr,me().age);G.fac=Object.assign({},rf.f);G.capB=Math.max(0,o.length+3-(4+3*G.fac.shuku));
  G.money=1500+o.length*40;G.sup=100+o.length*12+sek*60;G.supC=Math.round(2+o.length/3+sek*4);G.chi={1:30,3:30,5:30};G.bld={k:rf.b};G.rep=cl(20+sek*5+(o.some(r=>r.t==='Y')?15:0)+(o.some(r=>r.t==='O')?8:0),0,90);
  G.tkPol='old';G.rel={};G.ama=null;amaInit();mig11(G);mig12(G);myoInit(G);heyaInfoInit(G);toshiInit(G,true);finInit(G,true);refreshMarket();refreshMyo();
  addNews(bname(G.bnum)+'の番付から始めます。'+H[0]+'部屋の弟子は '+o.length+' 人(関取 '+sek+' 人)、部屋付き親方 '+G.staff.filter(x=>x.role==='co').length+' 人。資金 '+man(G.money)+'(資金力 '+finRank(G.finSc||0)+')。');
@@ -2053,8 +2055,6 @@ const hIc=x=>'<span class="hic i'+x.ic+'">'+ICR[x.ic]+'一門</span>';
 const hFr=x=>'<span class="hfr '+x.fr+'" title="資金力">'+x.fr+'</span>';
 const hLv=x=>{const l=x.fr==='S'||x.fr==='A'?['e','やさしい']:x.fr==='B'?['n','ふつう']:['h','むずかしい'];return '<span class="hlv '+l[0]+'">'+l[1]+'</span>';};
 function hsSet(k,v){UI.hs[k]=v;const y=window.scrollY;render();window.scrollTo(0,y);}
-const FACV={'二所ノ関':{keiko:3,shuku:5,bld:'own'},'伊勢ヶ濱':{keiko:1,bld:'rent'},'中村':{shoku:3,iryo:2,bld:'rent'},'音羽山':{bld:'rent'},'押尾川':{bld:'rent'},'秀ノ山':{bld:'own'},'時津風':{bld:'own'}};
-function realFac(n,sek,cnt,fr,age){const ri=fr==='S'||fr==='A';const f={keiko:Math.min(5,1+(sek>=3?1:0)+(sek>=6?1:0)),iryo:ri?2:1,shoku:ri?2:1,shuku:Math.min(5,Math.max(2,Math.ceil((cnt-4)/3)))};let b=(age||40)>=50?'own':'rent';const v=FACV[n];if(v){for(const k in v)if(k!=='bld')f[k]=v[k];if(v.bld)b=v.bld;}return {f:f,b:b,src:!!v};}
 function heyaSheet(n){const x=heyaList().find(h=>h.n===n);if(!x)return;
  $('#hsheet .in').innerHTML='<h2>'+esc(x.n)+'部屋 '+hIc(x)+hLv(x).replace('margin-left:auto','')+'<button class="x" onclick="heyaClose()">閉じる</button></h2>'+
  '<dl><dt>師匠</dt><dd>'+esc(x.m)+'(元'+esc(x.mb)+')・'+x.age+' 歳'+(x.post?'・協会の'+x.post:'')+'</dd>'+
