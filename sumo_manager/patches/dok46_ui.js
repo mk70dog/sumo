@@ -1,0 +1,19 @@
+function dokRk(i){let c=0;for(let d=0;d<DIVS.length;d++){c+=DIVS[d].sz;if(i<c)return DIVS[d].n;}return '前相撲';}
+const DOKMON={'横綱':1500,'大関':1000,'関脇':500,'小結':500};
+function dokList(){const ord=['横綱','大関','関脇','小結'];return TOSHI.filter(t=>t[3]!==1&&REALH.some(h=>h[0]===t[2])&&realAge(t[6])<64&&/^(横綱|大関|関脇|小結)/.test(t[5])).map(t=>{const h=REALH.find(x=>x[0]===t[2]);return {n:t[0],sh:t[4],top:t[5],ret:t[7],age:Math.floor(realAge(t[6])),home:t[8],par:t[2],ic:h[1]};}).sort((a,b)=>{const ia=ord.findIndex(k=>a.top.indexOf(k)===0),ib=ord.findIndex(k=>b.top.indexOf(k)===0);return (ia<0?9:ia)-(ib<0?9:ib)||a.age-b.age;});}
+function dokHTML(){if(!UI.dk)UI.dk={fi:-1};const fi=UI.dk.fi;const L=dokList().filter(x=>fi<0||x.ic===fi);
+ return '<p class="hlead">2026 年九州場所の部屋付き親方のうち、部屋を新しく興せる条件(横綱・大関、三役 25 場所以上、幕内 60 場所以上のどれか)に近い、最高位が小結以上で 65 歳の定年前の親方('+dokList().length+' 人)から、独立する親方を選びます。押すと詳しい説明と、連れて行く内弟子を選ぶ画面が出ます。<br>独立には協会の承認が必要です。元の部屋から連れて行けるのは自分の内弟子が原則です。</p>'+
+ '<div class="hbar"><b>一門</b><button class="hchip'+(fi<0?' on':'')+'" onclick="UI.dk.fi=-1;render()">すべて</button>'+ICR.map((n,i)=>'<button class="hchip'+(fi===i?' on':'')+'" onclick="UI.dk.fi='+i+';render()">'+n+'</button>').join('')+'</div>'+
+ '<div class="hgrid">'+L.map(x=>'<button class="hcard" onclick="dokSheet(\''+x.n+'\')"><div class="t"><b>'+esc(x.n)+'</b>'+hIc(x)+'</div><div class="s">元'+esc(x.sh)+'('+esc(x.top)+')・'+x.age+' 歳</div><div class="s">いま '+esc(x.par)+'部屋の部屋付き親方</div></button>').join('')+'</div>'+
+ '<div id="hcover" onclick="heyaClose()"></div><div id="hsheet"><div class="in"></div></div>';}
+function dokSheet(n){const x=dokList().find(y=>y.n===n);if(!x)return;const ws=[];REALB.forEach((l,i)=>{const f=l.split('|');const ry=x.ret?(+x.ret.slice(0,4)+(+x.ret.slice(5,7)-1)/12):2020;const ag=realAge(f[4]);const k=KEI[f[1]];const ea=k?(k[3]?22:k[4]?22:k[2]?18:15):18;const dy=2026.87-ag+ea;if(f[3]===x.par&&!/^[YO]$/.test(f[0])&&dy>=ry)ws.push({n:f[1],rk:(f[0]?{S:'関脇',K:'小結'}[f[0]]:dokRk(i)),age:Math.floor(ag)});});
+ const top=Object.keys(DOKMON).find(k=>x.top.indexOf(k)===0);const mon=1000+(top?DOKMON[top]:0);
+ $('#hsheet .in').innerHTML='<h2>'+esc(x.n)+'部屋を興す '+hIc(x)+'<button class="x" onclick="heyaClose()">閉じる</button></h2>'+
+ '<dl><dt>親方</dt><dd>'+esc(x.n)+'(元'+esc(x.sh)+'・'+esc(x.top)+')・'+x.age+' 歳・'+esc(x.home)+'出身</dd><dt>元の部屋</dt><dd>'+esc(x.par)+'部屋(一門はそのまま)</dd>'+
+ '<dt>始めの資金</dt><dd>'+man(mon)+'(自己資金・推定)</dd><dt>建物</dt><dd>借りもの(家賃あり)</dd><dt>施設</dt><dd>稽古場 1・医務室 1・食堂 1・宿舎 2(推定)</dd></dl>'+
+ '<input type="hidden" id="r_h" value=""><label>師匠の取り口(指導の得意分野)</label><select id="r_t"><option value="押">押し相撲</option><option value="四" selected>四つ相撲</option><option value="技">技能派</option></select><label>連れて行く内弟子(1〜8 人)</label><p class="kaku mute" style="font-size:12px;margin:0 0 4px">連れて行けるのは自分の内弟子が原則。'+esc(x.n)+'親方が引退した '+esc(x.ret||'')+' より後に入門したと考えられる力士だけを出しています(生年と学歴からの推定。学歴がわからない力士は高校卒業で入門とみなす)。</p><div class="dkw">'+ws.map((w,i)=>'<label class="dkc"><input type="checkbox" value="'+esc(w.n)+'" onchange="dokChk(this)"> <b>'+esc(w.n)+'</b> <span>'+w.rk+'・'+w.age+' 歳</span></label>').join('')+'</div>'+
+ '<p class="kaku mute" style="font-size:12px;margin:6px 0 0">実際の例:武隈 3 人・押尾川 3 人・音羽山 2 人・安治川 1 人・中村 8 人。</p>'+
+ '<button class="btn main" id="dkgo" disabled onclick="doStartDok(\''+esc(x.n)+'\')">'+esc(x.n)+'部屋として独立する</button>';
+ $('#hsheet').classList.add('on');$('#hcover').classList.add('on');document.body.classList.add('hs-open');}
+function dokChk(el){const c=[...document.querySelectorAll('.dkw input:checked')];if(c.length>8){el.checked=false;toast('実際の例では 8 人(中村部屋)がいちばん多い人数です');}const n=document.querySelectorAll('.dkw input:checked').length;const b=$('#dkgo');if(b)b.disabled=n<1;}
+function doStartDok(n){const ws=[...document.querySelectorAll('.dkw input:checked')].map(e=>e.value);if(!ws.length)return;UI.start=null;UI.title=false;newGameDok(n,ws,$('#r_t').value);save();UI.view='home';render();}
