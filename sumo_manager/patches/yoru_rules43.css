@@ -1,0 +1,24 @@
+body.sk-yoru{--washi:#16130f;--washi2:#1f1b16;--paper:#24201a;--sumi:#ece4d3;--sumi2:#c9bfac;--mute:#968b78;--shu:#e0583c;--shu2:#f07a5e;--kin:#d9b25e;--ai:#8fb0e0;--ai2:#a9c3ea;--midori:#7fbf8c;--line:#4a4236;background-color:#16130f;background-image:radial-gradient(rgba(255,240,200,.04) 1px,transparent 1px),radial-gradient(rgba(255,240,200,.04) 1px,transparent 1px)}
+body.sk-yoru #hdr{background:linear-gradient(#000000,#0d0b09);color:#ece4d3}
+body.sk-yoru #hdr .title small{color:#b8a984}
+body.sk-yoru #hdr .stat b{color:#f1d38e}
+body.sk-yoru #nav button,body.sk-yoru .btn,body.sk-yoru .divbtn button{background:linear-gradient(#3a332a,#2c2620);border-color:#5a5040;color:#ece4d3}
+body.sk-yoru #nav button.on,body.sk-yoru .btn.ai,body.sk-yoru .divbtn button.on{background:linear-gradient(#8a2b1a,#6b1f12);border-color:#6b1f12;color:#fff}
+body.sk-yoru .btn.main{background:linear-gradient(#c8432a,#9e2d18);border-color:#9e2d18;color:#fff}
+body.sk-yoru .tb th,body.sk-yoru .bz td.rk{background:#2e2921}
+body.sk-yoru .tb td,body.sk-yoru .bz td,body.sk-yoru .bout,body.sk-yoru .log div,body.sk-yoru .stf,body.sk-yoru .kr{border-bottom-color:#3a342b}
+body.sk-yoru .tb tr.me td,body.sk-yoru .bz .me{background:#4a2a22}
+body.sk-yoru .tb tr.clk:hover td{background:#302a22}
+body.sk-yoru .bar,body.sk-yoru .gg,body.sk-yoru .daybar i{background:#3a342b}
+body.sk-yoru .hl{background:#2e2716;border-color:#6b5a2e}
+body.sk-yoru .ev{background:#221d16}
+body.sk-yoru .nx,body.sk-yoru .atc,body.sk-yoru .spk,body.sk-yoru select,body.sk-yoru input[type=text],body.sk-yoru textarea{background:#1c1814;color:#ece4d3;border-color:#4a4236}
+body.sk-yoru .a1{color:#968b78}
+body.sk-yoru .st-wrap .start{background:#24201a}
+body.sk-yoru .pn{box-shadow:none}
+body.sk-yoru #mdl .box{color:var(--sumi)}
+body.sk-yoru .hcard,body.sk-yoru .st-wrap .start,body.sk-yoru #hsheet .in,body.sk-yoru #ssheet .in{background:#24201a;border-color:#6a5a3e;color:#eee6d6}
+body.sk-yoru .hcard .s,body.sk-yoru .st-wrap .start .lead,body.sk-yoru .st-wrap .start label,body.sk-yoru #hsheet dt,body.sk-yoru #hsheet label,body.sk-yoru #ssheet p{color:#b8ab95}
+body.sk-yoru .hcard .n em{color:#e0583c}
+body.sk-yoru #hsheet .x,body.sk-yoru #ssheet h2 button{color:#eee6d6;border-color:#6a5a3e}
+body.sk-yoru #hsheet select,body.sk-yoru .st-wrap .start select,body.sk-yoru .st-wrap .start input[type=text]{background:#2e2921;color:#eee6d6;border-color:#6a5a3e}
