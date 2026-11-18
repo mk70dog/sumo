@@ -19,15 +19,15 @@ const KPH={str:'腰が重い',exp:'立ち合いの踏み込みが鋭い',end:'�
 const KWK={str:'腰の軽さ',exp:'立ち合いの遅さ',end:'スタミナ',flx:'体の硬さ',tac:'当たりの弱さ',tsk:'押しの弱さ',yor:'寄りの足',tgw:'土俵際のもろさ',tos:'おとなしさ',rei:'あわてやすさ',gam:'辛抱のなさ'};
 function grW(v){return v>=16?['ひょっとすると、横綱まで行く器かもしれん。','横綱まで行ける器かもしれん。','この子は横綱まで行ける器だ。']:v>=13.5?['三役を狙える素材かもしれん。','三役も狙える素材だと思う。','三役は十分に狙える素材だ。']:v>=11?['関取になれるかどうか、まだ何とも言えん。','関取になれるだけのものは持っている。','稽古しだいで、関取にはなれる。']:v>=8.5?['まだ線が細い。','まだ線が細い。地道にやれば幕下までは行けるかもしれん。','幕下までは行ける。その先は本人しだいだ。']:['まだ何とも言えん。','正直、関取は厳しいかもしれん。','正直、関取は厳しいだろう。'];}
 function deg(v){return v>=17?'すごく':v>=15?'かなり':'なかなか';}
-function kotoba(r,cert){ // cert 0=まだ分からない 1=だいたい 2=はっきり
- const p=potOf(r);const g=grW(p);
+function kotoba(r,cert,pv){ // cert 0=まだ分からない 1=だいたい 2=はっきり
+ const p=pv!=null?pv:potOf(r);const g=grW(p);
  const ks=Object.keys(KPH).filter(k=>r.cap[k]!=null).sort((a,b)=>r.cap[b]-r.cap[a]);const n=cert===0?1:2;
  const st=ks.slice(0,n).map(k=>deg(r.cap[k])+KPH[k].replace(/^(.*?)(が|に|を)/,'$1$2')).join('。');
  const wk=Object.keys(KWK).filter(k=>r.cap[k]!=null).sort((a,b)=>r.cap[a]-r.cap[b])[0];
  const head=cert===0?'まだよく分からんが、':'';
  return {grade:head+g[cert],st:st+'。',wk:cert>=1?'ただ、'+KWK[wk]+'が課題だな。':'',tag:cert===0?'見立て:まだ':cert===1?'見立て:だいたい':'見立て:はっきり'};}
 function who(){const c=G.staff.find(s=>s.role==='co');return c?c.n+'(部屋付き親方)':'親方';}
-function kbox(r,cert){const k=kotoba(r,cert);return '<span class="oyk"><span class="who">'+esc(who())+' のひとこと・'+k.tag+'</span>「'+k.grade+k.st+(k.wk?k.wk:'')+'」</span>';}
+function kbox(r,cert){const pr=potRange(r);const k=kotoba(r,cert,(pr[0]+pr[1])/2);return '<span class="oyk"><span class="who">'+esc(who())+' のひとこと・'+k.tag+'</span>「'+k.grade+k.st+(k.wk?k.wk:'')+'」</span>';}
 function knCert(r){const v=r.h===0?r.kn:0;return v>=70?2:v>=35?1:0;}
 if(SMP.k){
  const op=potTxt;
@@ -38,7 +38,7 @@ if(SMP.k){
  const os=scoutHTML;scoutHTML=function(){const d=document.createElement('div');d.innerHTML=os();
   d.querySelectorAll('.cards.sc .card').forEach((c,i)=>{const p=G.pros[i];if(!p)return;const cert=p.v>=3?2:p.v>=1?1:0;const divs=[...c.querySelectorAll('.info > div')];
    const a=divs.find(x=>x.textContent.startsWith('今の力'));const b=divs.find(x=>x.textContent.startsWith('素質'));if(!a||!b)return;
-   const k=kotoba(p.r,cert);const box='<div class="oyk" style="margin:4px 0"><span class="who">見に行った人のひとこと・'+k.tag+'</span>「'+k.grade+k.st+(k.wk||'')+'」</div>';
+   const k=kotoba(p.r,cert,p.ep);const box='<div class="oyk" style="margin:4px 0"><span class="who">見に行った人のひとこと・'+k.tag+'</span>「'+k.grade+k.st+(k.wk||'')+'」</div>';
    if(SMP.k===1){a.outerHTML=box;b.remove();}
    else if(SMP.k===2){b.insertAdjacentHTML('afterend',box);}
    else{if(cert<2){a.outerHTML=box;b.outerHTML='<div class="mute" style="font-size:12px">3 回見に行くと数字が出ます</div>';}else b.insertAdjacentHTML('afterend',box);}});
