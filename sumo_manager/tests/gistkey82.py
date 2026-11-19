@@ -9,7 +9,7 @@ with sync_playwright() as p:
     pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto('file://'+f);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(300)
     pg.click('.st-two');pg.click('.st-go2 .st-dok')
-    pg.set_input_files('.mpkey input[type=file]',os.path.join(os.path.dirname(os.path.abspath(__file__)),'gist_dummy.json')).path.dirname(__file__)+'/gist_dummy.json');pg.wait_for_timeout(300)
+    pg.set_input_files('.mpkey input[type=file]',os.path.join(os.path.dirname(os.path.abspath(__file__)),'gist_dummy.json'));pg.wait_for_timeout(300)
     a=pg.evaluate("[localStorage.getItem('gsmTok'),document.querySelector('#mdl h2')&&document.querySelector('#mdl h2').textContent]")
     pg.evaluate("closeM()");pg.screenshot(path='/tmp/v82_top%s.png'%nm)
     pg.evaluate("topMode('one')");pg.click('.st-real');pg.click('.hcard >> nth=0');pg.wait_for_timeout(350);pg.click('#hsheet .btn.main');pg.evaluate("go('sys')")
