@@ -3206,7 +3206,7 @@ function rowsV2(){return topPairs().map(p=>{const a=G.R[p[0]].pos<G.R[p[1]].pos?
  return '<div class="nx"><div class="nxm"><div><span class="nm">'+esc(a.n)+'</span><div class="mute" style="font-size:12px">'+esc(a.rkS)+'・'+esc(G.heya[a.h].n)+'</div></div><div class="vs">対</div><div><span class="nm">'+esc(o.n)+'</span><div class="mute" style="font-size:12px">'+esc(o.rkS)+'・'+esc(G.heya[o.h].n)+'</div></div></div><table class="yt"><tr><th></th><th>'+esc(a.n)+'</th><th>'+esc(o.n)+'</th></tr>'+PAP.map((x,k)=>'<tr><td>'+x[0]+'</td><td>'+mkS(mk(ps[k]))+'</td><td>'+mkS(mk(1-ps[k]))+'</td></tr>').join('')+'</table></div>';}).join('');}
 const ob=bashoHTML;bashoHTML=function(){const d=document.createElement('div');d.innerHTML=ob();if(!G.B||G.phase!=='basho')return d.innerHTML;
  const pn=[...d.querySelectorAll('.pn')].find(e=>/日目の取組/.test((e.querySelector('h2')||{}).textContent||''));const day=(G.B.day||0)+1;
- const h=V===1?'<div class="pn"><h2>幕内上位の取組<span class="sub">'+day+'日目・結び前 5 番(日=相撲日報・角=スポーツ角界・裏=週刊土俵裏)</span></h2>'+rowsV1()+'</div>'
+ const h=V===1?'<div class="pn"><h2>幕内上位の取組<span class="sub">'+day+'日目・結び前 5 番</span></h2><p class="mute kaku" style="font-size:12px;margin:0 0 4px">日=相撲日報・角=スポーツ角界・裏=週刊土俵裏</p>'+rowsV1()+'</div>'
   :'<div class="pn"><details><summary style="font-weight:700;cursor:pointer">幕内上位の取組と新聞の印('+day+'日目・結び前 5 番)</summary>'+rowsV2()+'</details></div>';
  if(pn)pn.insertAdjacentHTML('afterend',h);return d.innerHTML;};
 // メディアの表に「予想の腕」
