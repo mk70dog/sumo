@@ -6,10 +6,10 @@ with sync_playwright() as p:
   for n,(w,h) in {'ipad_l':(1180,820),'ipad_p':(820,1180),'phone':(390,844)}.items():
     pg=b.new_page(viewport={'width':w,'height':h});errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.goto('file://'+f);pg.evaluate("localStorage.clear()");pg.reload();pg.click('.st-real')
+    pg.goto('file://'+f);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(800);pg.evaluate("UI.title=true;goStart('real')");pg.wait_for_timeout(300)
     cnt=pg.evaluate("document.querySelectorAll('.hcard').length");pg.screenshot(path=f'/tmp/v23_{n}.png')
-    pg.click('.hchip >> text=二所ノ関');c2=pg.evaluate("document.querySelectorAll('.hcard').length")
-    pg.click('.hchip >> text=歴史の古い順');first=pg.inner_text('.hcard b >> nth=0')
+    (pg.click('.hchip >> text=二所ノ関') if pg.query_selector('.hchip') else pg.select_option('.hsbar select[aria-label="一門"]',label='二所ノ関一門'));c2=pg.evaluate("document.querySelectorAll('.hcard').length")
+    (pg.click('.hchip >> text=歴史の古い順') if pg.query_selector('.hchip') else pg.select_option('.hsbar select[aria-label="並べ方"]',label='歴史の古い順'));first=pg.inner_text('.hcard b >> nth=0')
     sw=pg.evaluate("document.documentElement.scrollWidth")
     pg.click('.hcard >> nth=0');pg.wait_for_timeout(350);pg.screenshot(path=f'/tmp/v23_{n}_s.png')
     pg.select_option('#r_t','技');pg.click('#hsheet .btn.main')
