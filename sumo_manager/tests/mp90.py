@@ -24,6 +24,7 @@ with sync_playwright() as p:
   off=guest.evaluate("(()=>{const p=G.pros[0];if(!p)return null;const m=offerPros(p.cid,1);return [p.cid,String(m).slice(0,40),G.pend.length];})()")
   gstate=guest.evaluate("[G.money,G.con.gym,G.fac.iryo,G.pend.length,G.R[%d].menu]"%rid)
   guest.evaluate("go('keiko')");guest.wait_for_timeout(200);guest.screenshot(path=pre+'guest_keiko.png')
+  hrid=guest.evaluate("G.order.map(i=>G.R[i]).find(r=>r.h===0&&!r.ret).id");guest.evaluate("G.R[%d].menu='筋';G.P[0].money=99999"%hrid)
   guest.evaluate("doWeekUI()");guest.wait_for_timeout(300);rd=guest.evaluate("[MPG.ready,MPG.act]")
   guest.evaluate("go('keiko')");guest.wait_for_timeout(200);guest.screenshot(path=pre+'guest_keiko_ready.png')
   guest.evaluate("go('home')");guest.wait_for_timeout(200);guest.screenshot(path=pre+'guest_ready.png')
@@ -31,6 +32,7 @@ with sync_playwright() as p:
   host.evaluate("doWeekUI()");host.wait_for_timeout(200);host.screenshot(path=pre+'host_ready.png')
   host.wait_for_function("()=>G.mp.n===2",timeout=20000)
   hv=host.evaluate("(()=>{const i=pI(G.mp.gh);const P=G.P[i];return [G.wk,P.con.gym,P.fac.iryo,P.pend.length,G.R[%d].menu,G.R[%d].lw,Math.round(P.money),Math.round(G.money)];})()"%(rid,rid))
+  guard=host.evaluate("[G.R[%d].menu,Math.round(G.money)!==99999]"%hrid)
   guest.wait_for_function("()=>MPG.n===2&&mpIsP()",timeout=20000);gw=guest.evaluate("[G.wk,MPG.ready,G.con.gym,G.fac.iryo,G.pend.length,Math.round(G.money)]")
   # 初日まで → 子が作戦 → 1 日目
   guest.evaluate("doToBasho()");host.evaluate("doToBasho()");host.wait_for_function("()=>G.mp.n===3&&G.phase==='basho'",timeout=20000)
@@ -48,5 +50,5 @@ with sync_playwright() as p:
   # 子:終了して続きから
   guest.evaluate("quitTop()");guest.click('.st-two');guest.click("text=続きから(子)");guest.wait_for_function("()=>MPG.n===6&&mpIsP()",timeout=20000)
   sw=[pg.evaluate("[document.documentElement.scrollWidth,innerWidth]") for pg in (host,guest)]
-  print(json.dumps(dict(code=code,gname=gname,gh=gh,title=title,offer=off,guestLocal=gstate,ready=rd,hostAfter=hv,guestAfter=gw,tac=tac,guestEv=gev,next=bn,scroll=sw,errs=errs[:6]),ensure_ascii=False))
+  print(json.dumps(dict(guard=guard,code=code,gname=gname,gh=gh,title=title,offer=off,guestLocal=gstate,ready=rd,hostAfter=hv,guestAfter=gw,tac=tac,guestEv=gev,next=bn,scroll=sw,errs=errs[:6]),ensure_ascii=False))
   b.close()
