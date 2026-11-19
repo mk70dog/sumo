@@ -1,3 +1,4 @@
+import base64
 # 見本 int1〜2:取組の動画の初めに出す画像(ダルマさんの例:中継の題字「幕内 千秋楽」と、両力士の名前を大きく出す画面)
 # 中継の画面そのもの(局の名前・枠の飾り)はまねず、ゲームの錦絵と色で作る。v76 に見本用の表示だけを足す。
 base=open('sumo_manager_v76.html',encoding='utf-8').read()
@@ -41,7 +42,7 @@ function card2(o,b){const p=dhPick(b);const E=p.E,W=p.Wt;const re=rec(E,b),rw=re
 }
 const orig=window.dhRun;window.__stage=0;
 window.dhRun=function(id,b){const wr=document.getElementById(id+'w');if(!wr||!b){orig(id,b);return;}
- const o=document.createElement('div');o.className='ito';o.style.backgroundImage=bg();wr.appendChild(o);let done=0;
+ const o=document.createElement('div');o.className='ito'+(window.__sj?' sj':'');o.style.backgroundImage=bg();wr.appendChild(o);let done=0;
  const go=()=>{if(done)return;done=1;o.style.opacity=0;setTimeout(()=>o.remove(),400);orig(id,b);};o.onclick=go;
  if(V==='int1'){card1(o);window.__stage=1;setTimeout(()=>{if(!done){card2(o,b);window.__stage=2;}},1500);setTimeout(go,4200);}
  else{card2(o,b);window.__stage=2;setTimeout(go,3000);}};
@@ -49,9 +50,11 @@ window.addEventListener('load',()=>{setTimeout(()=>{try{localStorage.clear();new
 })();
 </script>
 '''
-NOTE={'int1':'int1:①題字「大相撲 幕内 千秋楽」→ ②両力士の名前を縦書きで大きく(番付・出身・部屋・成績)→ 取組','int2':'int2:東西に分けて名前と成績を並べる 1 枚だけ → 取組'}
+FONT=base64.b64encode(open('fonts/YujiSyuku-sub.woff2','rb').read()).decode()
+SJ='<style>@font-face{font-family:SumoJi;src:url(data:font/woff2;base64,'+FONT+') format("woff2")}.sj .itt,.sj .itm,.sj .it2{font-family:SumoJi,serif;font-weight:400}.sj .itt .b,.sj .itt .d,.sj .itt .s,.sj .itm .nm,.sj .itm .rk,.sj .itm .rc,.sj .it2 .nm,.sj .it2 .rc,.sj .it2 .ttl,.sj .it2 .side,.sj .it2 .rk{-webkit-text-stroke:.03em currentColor}.sj .itm .nm,.sj .it2 .nm{-webkit-text-stroke:.018em currentColor}</style>'
+NOTE={'int1s':'int1s:int1 を相撲字ふうの字(Yuji Syuku を太らせた字)で','int2s':'int2s:int2 を相撲字ふうの字で','int1':'int1:①題字「大相撲 幕内 千秋楽」→ ②両力士の名前を縦書きで大きく(番付・出身・部屋・成績)→ 取組','int2':'int2:東西に分けて名前と成績を並べる 1 枚だけ → 取組'}
 for k,n in NOTE.items():
-    s=base.replace('</body>',CSS+JS.replace('__V__',k)+'<div style="position:fixed;left:6px;bottom:6px;background:#000c;color:#fff;font:13px sans-serif;padding:4px 8px;border-radius:6px;z-index:9999">見本 '+n+'</div></body>',1)
+    s=base.replace('</body>',(SJ if k.endswith('s') else '')+CSS+JS.replace('__V__',k[:4])+('<script>window.__sj=1</script>' if k.endswith('s') else '')+'<div style="position:fixed;left:6px;bottom:6px;background:#000c;color:#fff;font:13px sans-serif;padding:4px 8px;border-radius:6px;z-index:9999">見本 '+n+'</div></body>',1)
     s=s.replace('<title>Sumo Manager v76</title>','<title>見本 %s</title>'%k,1)
     open('samples/%s.html'%k,'w',encoding='utf-8').write(s)
 print('ok')
