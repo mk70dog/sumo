@@ -1,6 +1,6 @@
-# Sumo Manager の作業ルール(Claude 向け)
+# Grand Sumo Manager の作業ルール(Claude 向け)
 
-このフォルダは、相撲部屋経営ゲーム「Sumo Manager」(単一 HTML)の置き場所です。リポジトリ直下の `index.html` は Sumo Manager の最新版へ飛ぶ入口です。`judge/`(Judge Console Hub)は別のものなので、触らないでください。
+このフォルダは、相撲部屋経営ゲーム「Grand Sumo Manager」(旧名 Sumo Manager。単一 HTML)の置き場所です。リポジトリ直下の `index.html` は Sumo Manager の最新版へ飛ぶ入口です。`judge/`(Judge Console Hub)は別のものなので、触らないでください。
 
 ## 再開するとき
 1. `docs/` の中で番号がいちばん大きい引き継ぎ資料(`SumoManager_Handoff_*_vN.md`)を読む。claude.ai のプロジェクト「sumo」にも同じ資料と `claude/00_再開手順.md` がある。

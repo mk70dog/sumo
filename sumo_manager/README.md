@@ -1,4 +1,4 @@
-# Sumo Manager 〜相撲部屋経営ゲーム〜
+# Grand Sumo Manager 〜相撲部屋経営ゲーム〜(旧名 Sumo Manager・相撲部屋物語)
 
 単一の HTML ファイルで動く、相撲部屋の経営ゲームです。
 
