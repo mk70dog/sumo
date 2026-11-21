@@ -11,7 +11,7 @@ const C=ctx;const E=x=>vm.runInContext(x,ctx);C.newGameReal('高田川');
 const FIX=`globalThis.__fix=function(S){const OY=me().oy;const co=G.staff.filter(x=>x.role==='co');
  const setO=v=>['osh','yot','waz','tai','sei'].forEach(k=>OY[k]=v);const setC=v=>co.forEach(s=>['osh','yot','waz','tai','sei'].forEach(k=>s.sk[k]=v));
  if(S==='oyL'){setO(6);setC(1);}if(S==='oyM'){setO(12);setC(1);}if(S==='oyH'){setO(18);setC(1);}if(S==='stH'){setO(6);setC(18);}
- if(S==='min'){setO(6);setC(1);G.fac.keiko=1;}if(S==='max'){setO(18);setC(18);G.fac.keiko=5;}if(S==='k1')G.fac.keiko=1;if(S==='k5')G.fac.keiko=5;
+ const fa=v=>{G.fac.keiko=v;G.fac.iryo=v;G.fac.shoku=v;G.con=v>=5?{gym:1,diet:1,clinic:1,doc:1}:{};};if(S==='min'){setO(6);setC(1);fa(1);}if(S==='max'){setO(18);setC(18);fa(5);}if(S==='k1')fa(1);if(S==='k5')fa(5);
  if(S==='it0'||S==='it2')own().forEach(r=>{if(r.menu!=='休')r.it=S==='it0'?0:2;});
  G.fac.shuku=Math.max(G.fac.shuku,8);if(G.money<3000)G.money=3000;};`;
 E(FIX);
