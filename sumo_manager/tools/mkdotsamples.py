@@ -1,8 +1,8 @@
 # 見本 dt1〜dt5:部屋の画面の白い欄(今週やること・部屋の声・注目選手・部屋の様子)を細かいドットに。v108 に CSS を足す。#dt1〜#dt5
 base=open('sumo_manager_v108.html',encoding='utf-8').read()
-G='#3b3a38';B='#c8ad86'
+G='#4a4845';B='#c8ad86'
 def dots(bg,dot,a,size=3):return "background:%s radial-gradient(%s .7px,transparent 1.1px) 0 0/%dpx %dpx!important"%(bg,dot,size,size) if a is None else "background:radial-gradient(%s .7px,transparent 1.1px) 0 0/%dpx %dpx,%s!important"%(dot,size,size,bg)
-DARK="color:#ece6da!important;border-color:#1c1b1a!important}B .hbp a,B .hbp h3{color:#fff!important}B .hbp small,B .hbp .mute{color:#bdb6a8!important}B .hbp .kp button small{color:#bdb6a8!important}B .hbp .hbk,B .hbp .hbl b,B .hbp .hbk small{color:#d4af4a!important}B .hbp .ostab button.on{background:#9a2b1d;color:#fff;border-color:#9a2b1d}B .hbp .otag{color:#ddd5c6;border-color:#8a847a}B .hbp .ostab button{background:#2a2928;color:#ddd;border-color:#6a665e}B .hbp .chg{background:#2a2928;color:#eee;border-color:#6a665e}B .hbp .hbk{border-color:rgba(255,255,255,.25)!important}"
+DARK="color:#ece6da!important;border-color:#1c1b1a!important}B .hbp a,B .hbp h3{color:#fff!important}B .hbp small,B .hbp .mute{color:#bdb6a8!important}B .hbp .kp button small{color:#bdb6a8!important}B .hbp .hbk,B .hbp .hbl b,B .hbp .hbk small{color:#d4af4a!important}B .hbp .ostab button.on{background:#9a2b1d;color:#fff;border-color:#9a2b1d}B .hbp .otag{color:#ddd5c6;border-color:#8a847a}B .hbp .ostab button{background:#3a3836;color:#ddd;border-color:#6a665e}B .hbp .chg{background:#3a3836;color:#eee;border-color:#6a665e}B .hbp .hbk{border-color:rgba(255,255,255,.25)!important}"
 LIGHT="color:#2a1d12!important;border-color:#6a4a2a!important}B .hbp a,B .hbp h3{color:#1d140c!important}B .hbp small,B .hbp .mute{color:#5a4632!important}B .hbp .kp button small{color:#bdb6a8!important}B .hbp .otag{color:#3a2a1a;border-color:#7a5e3e}B .hbp .ostab button{background:#e3d2b5;color:#2a1d12;border-color:#8a6a48}B .hbp .ostab button.on{background:#9a2b1d;color:#fff}"
 V={
 1:('暗いグレー地に細かい白っぽいドット',"B .hbp{"+dots(G,'rgba(255,255,255,.13)',1)+";"+DARK),
