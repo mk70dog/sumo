@@ -3,16 +3,18 @@ base=open('sumo_manager_v109.html',encoding='utf-8').read()
 OLD='<small>GRAND</small><b>SUMO</b><small>MANAGER</small>'
 assert base.count(OLD)==1
 GOLD="background:linear-gradient(180deg,#fff3c4,#e2b54a 55%,#a5741e);-webkit-background-clip:text;background-clip:text;color:transparent"
+T='相撲部屋経営<em>×</em>力士育成'
+HN=".t1 b{letter-spacing:.04em!important}.t1 .hn{display:block;font-style:normal;font-family:Dela,sans-serif;color:#f0c75e;font-size:min(2.2vw,2.6vh,22px);letter-spacing:.14em;margin:.45em 0 .1em;white-space:nowrap}.t1 .hn em{font-style:normal;font-family:sans-serif;font-weight:700;color:#f3e3c3;margin:0 .35em}"
 V={
-1:('「一人相撲」と同じ字(Dela・金)で一行',
- '<b>sumo</b><i class="hn">相撲部屋経営<em>×</em>力士育成</i>',
- ".t1 b{letter-spacing:.04em!important}.t1 .hn{display:block;font-style:normal;font-family:Dela,sans-serif;color:#f0c75e;font-size:min(3.3vw,3.8vh,34px);letter-spacing:.12em;margin:.3em 0 .05em;white-space:nowrap}.t1 .hn em{font-style:normal;font-family:sans-serif;font-weight:700;color:#f3e3c3;margin:0 .35em}"),
-2:('「一人相撲」のボタンと同じ箱(ドットの黒地・金の縁)に入れる',
- '<b>sumo</b><i class="hn"><span>相撲部屋経営<em>×</em>力士育成</span></i>',
- ".t1 b{letter-spacing:.04em!important}.t1 .hn{display:block;font-style:normal;margin:.35em 0 .1em}.t1 .hn span{display:inline-block;position:relative;isolation:isolate;font-family:Dela,sans-serif;color:#f0c75e;font-size:min(3vw,3.5vh,30px);letter-spacing:.12em;padding:.35em .9em;border:2px solid #f0c75e;border-radius:6px;background:#2a2018;white-space:nowrap}.t1 .hn span:before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;background-image:radial-gradient(#f0c75e .6px,transparent 1px);background-size:3px 3px;opacity:.14}.t1 .hn em{font-style:normal;font-family:sans-serif;font-weight:700;color:#f3e3c3;margin:0 .35em}"),
-3:('二段:「相撲部屋経営」「×」「力士育成」を大きめに',
- '<b>sumo</b><i class="hn"><span>相撲部屋経営</span><em>×</em><span>力士育成</span></i>',
- ".t1 b{letter-spacing:.04em!important}.t1 .hn{display:flex;align-items:center;justify-content:center;gap:.4em;font-style:normal;font-family:Dela,sans-serif;color:#f0c75e;font-size:min(3.8vw,4.3vh,40px);letter-spacing:.1em;margin:.3em 0 .05em;white-space:nowrap}.t1 .hn em{font-style:normal;font-family:sans-serif;font-weight:700;color:#f3e3c3;font-size:.8em}"),
+1:('黒い板はそのまま、金の枠を消す',
+ '<b>sumo</b><i class="hn">'+T+'</i>',
+ HN+".t1{border:none!important;outline:none!important}"),
+2:('板も枠も消して、絵の上に字だけ(影で読みやすく)',
+ '<b>sumo</b><i class="hn">'+T+'</i>',
+ HN+".t1{border:none!important;outline:none!important;background:none!important;box-shadow:none!important}.t1 b{filter:drop-shadow(0 3px 2px #000) drop-shadow(0 0 12px #000c)!important}.t1 .hn{text-shadow:0 2px 3px #000,0 0 10px #000}"),
+3:('枠を消し、板を半分すける黒にして絵が少し見える',
+ '<b>sumo</b><i class="hn">'+T+'</i>',
+ HN+".t1{border:none!important;outline:none!important;background:rgba(20,16,12,.62)!important;box-shadow:0 0 40px 20px rgba(20,16,12,.45)!important;border-radius:6px}"),
 }
 for k,(note,html,css) in V.items():
     s=base.replace(OLD,html).replace('</head>','<style>'+css+'</style></head>',1)
