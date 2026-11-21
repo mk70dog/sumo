@@ -25,3 +25,12 @@
 2. `main` にコミットして push する(`git push origin main`)。
 3. claude.ai のプロジェクト「sumo」に引き継ぎ資料の新版を保存し、`claude/00_再開手順.md` の「最新版」の行を更新する。
 4. ダルマさんに本体と引き継ぎ資料のファイルも送る。
+
+## GitHub に上げられないとき(新しいチャットでよく起きる)
+1. まず `mcp__claude-code-remote__add_repo`(owner `mk70dog`、repo `sumo`、**access は `push`**)。読むだけ(read)で追加すると push できない。
+2. 「許可されない(denied)」と出たら、回り道をせず、ダルマさんに「GitHub の mk70dog/sumo を追加する許可をください」と頼んで、もう一度 add_repo する(2026-11-19 も 1 回目は拒否、2 回目で通った)。
+3. clone は 1 回だけ、時間を長めに:`git clone --depth 1 https://github.com/mk70dog/sumo /home/claude/sumo`(10 分まで待つ)。そのあと `register_repo_root`。
+4. push の前に `git fetch --depth=50 origin main` → `git merge-base --is-ancestor origin/main HEAD` で確かめる。ほかのチャットが先に上げていたら `git merge --ff-only origin/main`(自分の変更があれば rebase)。push は `git -c push.negotiate=true push origin HEAD:main`。
+5. 429(too many concurrent)は 5 秒待って 1 回だけやり直す。413(大きすぎる)は 4 のとおり fetch してから。
+6. どうしても上げられないときは、本体と資料のファイルをダルマさんに送り、何が上がっていないかを資料と返事に書く。
+7. コミットの最後には、そのときの system-reminder にある署名の行を付ける。
