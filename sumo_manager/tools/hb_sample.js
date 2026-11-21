@@ -4,13 +4,14 @@
 const HB_IMG='data:image/jpeg;base64,__HBIMG__';
 const HB_BOX={x0:195,x1:948,y0:320,W:1200,H:896};
 function hbV(){const m=(location.hash||'').match(/hb(\d)/);return m?+m[1]:1;}
-function hbTodo(row){const L=[];
- if(G.phase==='train')L.push('<h3>稽古 第'+G.wk+'週<small>'+bname(G.bnum)+'の初日まであと '+(WEEKS-G.wk+1)+' 週</small></h3>'+weekDots()+
-  '<div class="hbb'+(row?' row':'')+'"><button class="btn main" onclick="doWeekUI()">1 週間を過ごす</button><button class="btn ai" onclick="doToBasho()">初日まで進める</button><button class="btn" onclick="go(\'keiko\')">稽古を決める</button></div>');
- else if(G.phase==='basho')L.push('<h3>本場所の最中<small>'+(G.B.day?G.B.day+'日目まで':'初日前')+'</small></h3><div class="hbb"><button class="btn main" onclick="go(\'basho\')">本場所の画面へ</button></div>');
- else L.push('<h3>場所を終えて</h3><div class="hbb"><button class="btn main" onclick="doNext()">番付発表へ進む</button></div>');
- if(G.ev.length)L.push('<div class="hbev">親方の悩みごと '+G.ev.length+' 件<small>下で答えられます</small></div>');
- return '<div class="hbp hbt"><div class="hbk">今週やること</div>'+L.join('')+'</div>';}
+function hbTodo(row){const L=[];/* row=横一列(上の帯用) */
+ const ev=G.ev.length?'<span class="hbev">親方の悩みごと '+G.ev.length+' 件<small>下で答えられます</small></span>':'';
+ let t='',sub='',bt='';
+ if(G.phase==='train'){t='稽古 第'+G.wk+'週';sub=bname(G.bnum)+'の初日まであと '+(WEEKS-G.wk+1)+' 週';bt='<button class="btn main" onclick="doWeekUI()">1 週間を過ごす</button><button class="btn ai" onclick="doToBasho()">初日まで進める</button><button class="btn" onclick="go(\'keiko\')">稽古を決める</button>';}
+ else if(G.phase==='basho'){t='本場所の最中';sub=G.B.day?G.B.day+'日目まで':'初日前';bt='<button class="btn main" onclick="go(\'basho\')">本場所の画面へ</button>';}
+ else{t='場所を終えて';sub=G.ev.length?'出来事に答えると進めます':'';bt='<button class="btn main" onclick="doNext()">番付発表へ進む</button>';}
+ if(row)return '<div class="hbp hbt line"><div class="hbk">今週やること</div><div class="hbln"><h3>'+t+'<small>'+sub+'</small></h3>'+(G.phase==='train'?weekDots():'')+'<div class="hbb row">'+bt+'</div>'+ev+'</div></div>';
+ return '<div class="hbp hbt"><div class="hbk">今週やること</div><h3>'+t+'<small>'+sub+'</small></h3>'+(G.phase==='train'?weekDots():'')+'<div class="hbb">'+bt+'</div>'+(ev?'<div>'+ev+'</div>':'')+'</div>';}
 function hbOshi(){const r=oshiR();if(!r)return '';return '<div class="hbp hbo"><div class="hbk">★ 注目選手<button class="chg" onclick="oshiPick()">変える</button></div><h3><a onclick="showR('+r.id+')">'+esc(r.n)+'</a><small>'+esc(r.rk)+'・'+Math.floor(r.age)+' 歳</small></h3><div class="hbg">'+oshiGoal(r)+'</div>'+oshiTags(r)+'</div>';}
 function hbKoe(){return '<div class="hbp hbv"><div class="hbk">部屋の声<small>押すと話が聞けます</small></div><div class="kp">'+koePeople().map((p,i)=>'<button onclick="koeModal('+i+')">'+esc(p.who)+' <small>'+esc(p.role)+'</small></button>').join('')+'</div></div>';}
 function hbYosu(){const o=own();const sek=o.filter(r=>r.d<=1);const lg=(G.log||[])[0]||'';
@@ -40,7 +41,7 @@ function hbFit(){const st=document.querySelector('.hbs');if(!st)return;const W=s
  l.style.cssText='left:'+g+'px;top:'+(T)+'px;bottom:'+g+'px;width:'+Math.max(0,L-2*g)+'px';
  r.style.cssText='right:'+g+'px;top:'+(T)+'px;bottom:'+g+'px;width:'+Math.max(0,Rr-2*g)+'px';
  // 上の帯に入りきらない分は、左右の欄へ(土俵の高さより上の分も使えるよう、左右は帯の下から)
- if(t.scrollHeight>t.clientHeight+4&&t.children.length){st.classList.add('tall');}
+ if(t.children.length&&t.scrollHeight>t.clientHeight+4&&!st.dataset.out){st.dataset.out=1;const box=document.createElement('div');box.className='hbout';while(t.firstChild)box.appendChild(t.firstChild);st.before(box);return hbFit();}
 }
 const hbR0=render0;
 render0=function(){hbR0();if(!G||UI.title||UI.view!=='home'||G.mp)return;const app=$('#app');
@@ -64,10 +65,12 @@ addEventListener('resize',()=>requestAnimationFrame(hbFit));addEventListener('ha
 .hbk small{font-weight:normal;color:#6b5a48}.hbk .chg{margin-left:auto;font-size:11px}
 .hbb{display:flex;flex-direction:column;gap:6px;margin-top:6px}.hbb.row{flex-direction:row;flex-wrap:wrap}.hbb .btn{margin:0;padding:6px 12px;font-size:14px}
 .hbt .daybar{margin:4px 0}
-.hbev{margin-top:6px;background:#9a2b1d;color:#fff;border-radius:6px;padding:3px 8px;font-size:12px}.hbev small{margin-left:6px;opacity:.85}
+.hbt.line{padding:4px 10px}.hbt.line .hbk{border:none;margin:0}.hbln{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hbln h3{margin:0;white-space:nowrap}.hbln .daybar{width:120px;margin:0}.hbln .hbb{margin:0}.hbln .hbev{margin:0}
+.hbev{display:inline-block;margin-top:6px;background:#9a2b1d;color:#fff;border-radius:6px;padding:3px 8px;font-size:12px}.hbev small{margin-left:6px;opacity:.85}
 .hbg{font-size:12px;margin-bottom:4px}.hbo .otg{display:flex;flex-wrap:wrap;gap:3px}.hbo .otag{font-size:11px}
 .hbv .kp{display:flex;flex-wrap:wrap;gap:4px}.hbv .kp button{font-size:12px;padding:3px 8px}
 .hbl{font-size:12px;margin:2px 0}.hbl b{color:#6b5a48;margin-right:6px;font-weight:normal}.hbn{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hbout{display:flex;justify-content:center;margin:0 0 8px}.hbout>.hbp{max-width:100%}
 .hbcap{position:absolute;right:8px;bottom:4px;font-size:10px;color:#f3e6c8;text-shadow:0 1px 2px #000;z-index:3}
 .hb3{display:flex;gap:8px;width:100%;align-items:flex-start}.hb3>.hbp{flex:1;max-height:100%;overflow:auto}
 .hbban{align-self:flex-start;background:rgba(40,25,15,.82);color:#f3e6c8;border:1px solid #c9a24a;border-radius:6px;padding:6px 12px;font-size:14px}.hbban .daybar{margin-top:4px}
@@ -78,5 +81,6 @@ addEventListener('resize',()=>requestAnimationFrame(hbFit));addEventListener('ha
 /* 狭い画面:絵の上には何も置かず、下に並べる */
 .hbs.nar{overflow:visible;background:none}.hbs.nar .hbblur{display:none}
 .hbs.nar .hbimg{position:relative;display:block;left:auto!important;top:auto!important;width:100%!important;aspect-ratio:1200/896;height:auto!important;border-radius:10px}
-.hbs.nar{height:auto!important}.hbs.nar .hbslot{position:static;margin-top:8px}.hbs.nar .hbtop{flex-direction:column}.hbs.nar .hb3{flex-direction:column}.hbs.nar .hbcap{position:static;color:#6b5a48;text-shadow:none}
+.hbs.nar{height:auto!important}.hbs.nar .hbslot{position:static;margin-top:8px}.hbs.nar .hbtop{flex-direction:column}.hbs.nar .hb3{flex-direction:column}.hbs.nar .hbout{display:flex;justify-content:center;margin:0 0 8px}.hbout>.hbp{max-width:100%}
+.hbcap{position:static;color:#6b5a48;text-shadow:none}
 </style>
