@@ -12,10 +12,11 @@ V={
 5:('組み合わせ:上の帯は暗いグレー、左右の欄はライトブラウン',"B .hbp{"+dots(B,'rgba(80,50,20,.22)',1)+";"+LIGHT+"B .hbout .hbp{"+dots(G,'rgba(255,255,255,.13)',1)+";color:#ece6da!important}B .hbout .hbp h3{color:#fff!important}B .hbout .hbp small{color:#bdb6a8!important}B .hbout .hbp .hbk{color:#d4af4a!important}"),
 }
 import json
-css={k:v[1].replace('B ','body.dtx ') for k,v in V.items()}
+SKC="body.dtx.sk-urushi .hbp .hbk,body.dtx.sk-urushi .hbp .hbl b,body.dtx.sk-urushi .hbp .hbk small{color:#f0735a!important}body.dtx.sk-urushig .hbp .hbk,body.dtx.sk-urushig .hbp .hbl b,body.dtx.sk-urushig .hbp .hbk small{color:#d8d8d8!important}body.dtx.sk-urushig .hbp .ostab button.on{background:#c8c8c8!important;color:#1a1a1a!important;border-color:#c8c8c8!important}"
+css={k:v[1].replace('B ','body.dtx ')+(SKC if k in(1,4) else '') for k,v in V.items()}
 js="""<script>(function(){const C=%s,N=%s;const v=+((location.hash.match(/dt(\\d)/)||[])[1]||1);document.head.insertAdjacentHTML('beforeend','<style>'+C[v]+'</style>');
-addEventListener('load',()=>{setTimeout(()=>{try{document.body.classList.add('dtx');localStorage.clear();localStorage.setItem('sumoSkin','urushik');applySkin('urushik');newGameReal('木瀬');UI.title=0;UI.start=0;const o=own().slice().sort((a,b)=>a.pos-b.pos);G.oshi=[o[0].id,o[1].id,o[2].id];go('home');render();}catch(e){console.error(e)}
-const d=document.createElement('div');d.style.cssText='position:fixed;left:6px;bottom:6px;background:#000c;color:#fff;font:13px sans-serif;padding:4px 8px;border-radius:6px;z-index:9999';d.textContent='見本 dt'+v+':'+N[v]+'(#dt1〜#dt5 で切りかえ)';document.body.appendChild(d);},80);});
+addEventListener('load',()=>{setTimeout(()=>{try{document.body.classList.add('dtx');localStorage.clear();const sk=(location.hash.match(/(urushi[kg]?)/)||[])[1]||'urushik';localStorage.setItem('sumoSkin',sk);applySkin(sk);newGameReal('木瀬');UI.title=0;UI.start=0;const o=own().slice().sort((a,b)=>a.pos-b.pos);G.oshi=[o[0].id,o[1].id,o[2].id];go('home');render();}catch(e){console.error(e)}
+const d=document.createElement('div');d.style.cssText='position:fixed;left:6px;bottom:6px;background:#000c;color:#fff;font:13px sans-serif;padding:4px 8px;border-radius:6px;z-index:9999';const SN={urushi:'漆黒・朱',urushik:'漆黒・金',urushig:'漆黒・銀'};d.textContent='見本 dt'+v+':'+N[v]+' / '+SN[(location.hash.match(/(urushi[kg]?)/)||[])[1]||'urushik']+'(#dt1-urushi・#dt1-urushik・#dt1-urushig で切りかえ)';document.body.appendChild(d);},80);});
 addEventListener('hashchange',()=>location.reload());})();</script>"""%(json.dumps(css,ensure_ascii=False),json.dumps({k:v[0] for k,v in V.items()},ensure_ascii=False))
 open('samples/dt.html','w',encoding='utf-8').write(base.replace('</body>',js+'</body>',1))
 print('ok')
