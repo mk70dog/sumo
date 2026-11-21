@@ -1,0 +1,131 @@
+<script>
+/* v102:二人相撲の「勝負の形」を選べる。①点数勝負(5・10・20 年)②先に目標に届いたほうの勝ち ③部屋番付 ④記録だけ。
+   親が始めるときに選び(G.mp.sb)、子には参加の画面に出る。計算は親の iPad で場所の終わりに行う(sbBasho)。点数のきまりは推定。 */
+const SB_NAME={1:'点数勝負',2:'先に目標に届いたほうの勝ち',3:'部屋番付',4:'記録だけ'};
+const SB_DESC={1:'場所ごとの点数を足して、期間が終わったときに多いほうが勝ち。',2:'決まった目標に先に届いたほうが勝ち。',3:'場所ごとにふたりの部屋の格を順位づけ。終わりなしで、通算の順位を競う。',4:'勝ち負けはつけない。今の二人相撲のまま、成績表を並べて見られる。'};
+const SB_GOAL={yok:'自分の部屋から横綱を出す',yu3:'幕内優勝を 3 回',sk5:'新十両を 5 人'};
+const SB_LV=['幕下以下','十両','幕内','三役','大関','横綱'],SB_POS=[8,24,42,62,80,100];
+UI.mpSb=UI.mpSb||{k:1,y:10,g:'yok'};
+function sbSet(k,v){UI.mpSb[k]=v;render();}
+function sbOf(){return G&&G.mp&&G.mp.sb||null;}
+function sbNm(h){return G&&G.heya[h]?G.heya[h].n:'?';}
+function sbTitle(sb){return sb.k===1?'点数勝負 '+sb.y+' 年':sb.k===2?'目標:'+SB_GOAL[sb.g]:SB_NAME[sb.k];}
+/* --- 始めるときの選択(スタート画面・二人相撲) --- */
+function sbPanel(){const o=UI.mpSb;
+ const chip=(on,t,f)=>'<button class="btn sm'+(on?' main':'')+'" onclick="'+f+'">'+t+'</button> ';
+ return '<div class="sbpick"><b>勝負の形(親が決めます。子には参加の画面に出ます)</b>'+[1,2,3,4].map(k=>'<div class="sbo'+(o.k===k?' on':'')+'" onclick="sbSet(\'k\','+k+')"><b>'+(o.k===k?'◉ ':'○ ')+['①','②','③','④'][k-1]+' '+SB_NAME[k]+'</b><small>'+SB_DESC[k]+'</small>'+
+  (o.k===k&&k===1?'<div class="sbch" onclick="event.stopPropagation()">期間: '+[5,10,20].map(y=>chip(o.y===y,y+' 年','sbSet(\'y\','+y+')')).join('')+'</div>':'')+
+  (o.k===k&&k===2?'<div class="sbch" onclick="event.stopPropagation()">目標: '+Object.keys(SB_GOAL).map(g=>chip(o.g===g,SB_GOAL[g],'sbSet(\'g\',\''+g+'\')')).join('')+'</div>':'')+'</div>').join('')+
+  '<small>始めたあとは形を変えられません(ふたりが同意すればやり直し)。どの形でも、決着のあとも遊びつづけられます。</small></div>';}
+const sbTop0=topHTML;topHTML=function(){let h=sbTop0();if(UI.mode!=='two')return h;const i=h.indexOf('<button class="st-real"');return i<0?h:h.slice(0,i)+sbPanel()+h.slice(i);};
+function sbMake(){if(G&&G.mp&&G.mp.role==='host'&&!G.mp.sb){const o=UI.mpSb||{k:1,y:10,g:'yok'};G.mp.sb={k:o.k,y:o.y,g:o.g};}}
+const sbNG=newGameReal;newGameReal=function(){sbNG.apply(this,arguments);sbMake();};
+const sbND=newGameDok;newGameDok=function(){sbND.apply(this,arguments);sbMake();};
+/* --- 子の参加の画面に、決まった形を出す --- */
+const sbGH=mpGuestHTML;mpGuestHTML=function(){let o=sbGH();const sb=sbOf();
+ if(sb&&MPG.gh<0&&!MPG.dk&&!UI.mpDk)o=o.replace('<div class="pn">',()=>'<div class="pn"><div class="mpp" style="background:#fff7e0;margin-bottom:10px"><b>勝負の形:'+esc(sbTitle(sb))+'</b><div class="kaku" style="font-size:13px">'+esc(sb.k===1?SB_DESC[1].replace('期間が終わった','期間('+sb.y+' 年・'+sb.y*6+' 場所)が終わった'):sb.k===2?SB_DESC[2]+'(目標:'+SB_GOAL[sb.g]+')':SB_DESC[sb.k])+' 親が決めた形です。</div></div>');
+ return o;};
+/* --- 点数の計算(場所が終わったとき。親の iPad) --- */
+function sbInit(){const m=G&&G.mp,sb=m&&m.sb;if(!sb||m.role!=='host'||!(m.gh>0)||sb.b0!=null)return;
+ sb.b0=G.bnum;sb.y0=Object.values(G.R).filter(r=>r.t==='Y').map(r=>r.id);sb.ta=0;sb.tg=0;sb.n=0;sb.log=[];sb.yu={a:0,g:0};sb.nj={a:0,g:0};sb.r1={a:0,g:0,t:0};save();}
+function sbPts(h){const items=[];let p=0;const add=(t,n,v)=>{if(n){items.push([t,n,n*v]);p+=n*v;}};
+ let sk=0,sy=0,oz=0,yk=0,nj=0,nm=0,top=1;
+ G.order.forEach(id=>{const r=G.R[id];if(!r||r.h!==h||r.d>1)return;const rc=G.lastRec&&G.lastRec[id];if(!rc)return;
+  if(r.t==='Y')yk++;else if(r.t==='O')oz++;else if(r.t)sy++;else sk++;top=Math.max(top,rankLv(r));
+  const H=r.hist||[];if(H.length>=2&&H[H.length-1].b===G.bnum){const pre=H.slice(0,-1);if(r.d===1&&!pre.some(x=>x.d<=1))nj++;if(r.d===0&&!pre.some(x=>x.d===0))nm++;}});
+ add('関取(平幕・十両)',sk,1);add('三役',sy,2);add('大関',oz,3);add('横綱',yk,5);
+ const ys=(G.yusho||[]).filter(y=>y.b===G.bnum&&y.oh===h);const y0=ys.filter(y=>y.d===0).length,y1=ys.filter(y=>y.d===1).length;
+ add('幕内優勝',y0,10);add('十両優勝',y1,3);
+ add('三賞',((G.last&&G.last.sansho)||[]).filter(x=>x.h===h).length,2);
+ add('新十両',nj,2);add('新入幕',nm,3);
+ if(G.bnum%6===0){const yr=pv(h,'yr');const l=yr&&yr[yr.length-1];if(l&&l.y===Math.floor((G.bnum-1)/6)+1){const v={S:10,A:5,B:2}[l.g]||0;if(v){items.push(['年間評価 '+l.g,1,v]);p+=v;}}}
+ const sc=(pv(h,'ev')||[]).filter(e=>e.k==='scand').length;if(sc){items.push(['不祥事',sc,-5*sc]);p-=5*sc;}
+ return {p:p,items:items,sk:sk+sy+oz+yk,top:top,yu:y0,nj:nj};}
+function sbBasho(){const sb=sbOf();if(!sb||G.mp.role!=='host'||!(G.mp.gh>0))return;sbInit();if(sb.b0==null)return;
+ if(sb.log.length&&sb.log[sb.log.length-1].b===G.bnum)return;
+ const A=sbPts(0),B=sbPts(G.mp.gh);
+ sb.ta+=A.p;sb.tg+=B.p;sb.n++;sb.yu.a+=A.yu;sb.yu.g+=B.yu;sb.nj.a+=A.nj;sb.nj.g+=B.nj;sb.r1[A.p>B.p?'a':A.p<B.p?'g':'t']++;
+ sb.log.push({b:G.bnum,a:A.p,g:B.p,ca:sb.ta,cg:sb.tg,sa:A.sk,sg:B.sk,ta:A.top,tg:B.top});if(sb.log.length>150)sb.log.shift();
+ sb.ia=A.items;sb.ig=B.items;sbEval();}
+function sbDone(w,why){const sb=sbOf();const a=sbNm(0)+'部屋',g=sbNm(G.mp.gh)+'部屋';
+ sb.done={w:w,b:G.bnum,why:why};const t=w==='t'?'引き分けです。':(w==='a'?a:g)+'の勝ちです!';
+ forP(()=>{addNews('〔二人相撲〕勝負が決まりました。'+why+t);});}
+function sbEval(){const sb=sbOf();if(!sb||sb.done||sb.b0==null||!(G.mp.gh>0))return;const gh=G.mp.gh;
+ if(sb.k===1){if(sb.n>=sb.y*6){sb.res={a:sb.ta,g:sb.tg};sbDone(sb.ta>sb.tg?'a':sb.ta<sb.tg?'g':'t',sb.y+' 年('+sb.y*6+' 場所)が終わり、点数は '+sbNm(0)+' '+sb.ta+' 点・'+sbNm(gh)+' '+sb.tg+' 点でした。');}return;}
+ if(sb.k!==2)return;let a,g,why;
+ if(sb.g==='yok'){const f=h=>Object.values(G.R).some(r=>r.h===h&&r.t==='Y'&&!sb.y0.includes(r.id));a=f(0);g=f(gh);why='先に横綱を出しました。';}
+ else if(sb.g==='yu3'){a=sb.yu.a>=3;g=sb.yu.g>=3;why='先に幕内優勝 3 回に届きました。';}
+ else{a=sb.nj.a>=5;g=sb.nj.g>=5;why='先に新十両 5 人に届きました。';}
+ if(a&&g){const w=sb.g==='sk5'&&sb.nj.a!==sb.nj.g?(sb.nj.a>sb.nj.g?'a':'g'):'t';sbDone(w,'ふたりが同じ場所で目標に届きました。');}
+ else if(a)sbDone('a',why);else if(g)sbDone('g',why);}
+const sbEB=endBasho;endBasho=function(){const r=sbEB.apply(this,arguments);try{sbBasho();}catch(e){try{sysLog('勝負の点数',e);}catch(x){}}return r;};
+const sbNC=nextCycle;nextCycle=function(){const r=sbNC.apply(this,arguments);try{if(r)sbEval();}catch(e){try{sysLog('勝負の判定',e);}catch(x){}}return r;};
+const sbHT=mpHostTick;mpHostTick=async function(){const r=await sbHT.apply(this,arguments);try{sbInit();}catch(e){}return r;};
+/* --- 帯 --- */
+function sbProg(h){const sb=sbOf(),k=h===0?'a':'g';
+ if(sb.g==='yok'){let lv=1;Object.values(G.R).forEach(r=>{if(r.h!==h||r.ret)return;let l=rankLv(r);if(l===6&&(sb.y0||[]).includes(r.id))l=5;lv=Math.max(lv,l);});return {v:SB_POS[lv-1],t:lv>=6?'横綱に届いた':SB_LV[lv-1]+'まで',lv:lv};}
+ const n=sb.g==='yu3'?sb.yu[k]:sb.nj[k],m=sb.g==='yu3'?3:5;return {v:Math.min(100,n/m*100),t:n+' / '+m+(sb.g==='yu3'?' 回':' 人'),lv:n};}
+function sbBand(){const sb=sbOf();if(!sb||sb.k===4||!G.mp)return '';const gh=G.mp.gh,A=sbNm(0),B=gh>0?sbNm(gh):'相手';
+ const tag='<span class="tag">'+esc(sbTitle(sb))+'</span>';if(sb.b0==null||!(gh>0))return '<div class="sbb">'+tag+'<span>相手の参加を待っています</span></div>';
+ const dn=sb.done?'<span class="lead">決着:'+(sb.done.w==='t'?'引き分け':esc(sb.done.w==='a'?A:B)+'の勝ち')+'</span>':'';
+ if(sb.k===1){const ta=sb.res?sb.res.a:sb.ta,tg=sb.res?sb.res.g:sb.tg,d=ta-tg,rm=sb.y*6-sb.n;
+  return '<div class="sbb">'+tag+'<span class="sc">'+esc(A)+' <b>'+ta+'</b>点</span><span class="sc">'+esc(B)+' <b>'+tg+'</b>点</span>'+(dn||(d?'<span class="lead">'+esc(d>0?A:B)+'が '+Math.abs(d)+' 点リード</span>':'<span class="lead">同点</span>'))+'<span style="margin-left:auto">'+(sb.done?'期間は終わりました(続けられます)':'残り '+Math.floor(rm/6)+' 年 '+rm%6+' 場所('+rm+' 場所)')+'</span></div>';}
+ if(sb.k===2){const pa=sbProg(0),pg=sbProg(gh);const lead=pa.v===pg.v?'':'<span class="lead">'+esc(pa.v>pg.v?A:B)+'がリード</span>';
+  return '<div class="sbb">'+tag+'<span class="sc">'+esc(A)+' '+esc(pa.t)+' <span class="bar"><i style="width:'+pa.v+'%"></i></span></span><span class="sc">'+esc(B)+' '+esc(pg.t)+' <span class="bar"><i style="width:'+pg.v+'%"></i></span></span>'+(dn||lead)+'</div>';}
+ const l=sb.log[sb.log.length-1];const r=l?(l.a>l.g?[1,2]:l.a<l.g?[2,1]:[1,1]):null;
+ return '<div class="sbb">'+tag+(r?'<span class="sc">今場所 <b>'+esc(A)+' '+r[0]+'位</b>・'+esc(B)+' '+r[1]+'位'+(l.a===l.g?'(同点)':'')+'</span>':'<span>最初の場所が終わると順位が出ます</span>')+'<span class="sc">通算 1位 '+sb.r1.a+'回・'+sb.r1.g+'回'+(sb.r1.t?'(同点 '+sb.r1.t+')':'')+'</span><span style="margin-left:auto">終わりなし</span></div>';}
+const sbB0=mpBar;mpBar=function(){return sbB0()+sbBand();};
+/* --- 記録の「勝負」欄 --- */
+function sbChart(L){if(L.length<2)return '<p class="mute">2 場所以上たつとグラフが出ます。</p>';const w=560,h=170,px=34,py=12,n=L.length,mx=Math.max(1,L[n-1].ca,L[n-1].cg)*1.08;
+ const X=i=>px+(w-px-10)*i/(n-1),Y=v=>h-18-(h-18-py)*Math.max(0,v)/mx;let g='';
+ for(let k=0;k<=4;k++){const v=Math.round(mx*k/4);g+='<line x1="'+px+'" x2="'+(w-10)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="#e5dcc6"/><text x="'+(px-4)+'" y="'+(Y(v)+4)+'" font-size="10" text-anchor="end" fill="#888">'+v+'</text>';}
+ [0,Math.floor((n-1)/2),n-1].forEach(i=>{g+='<text x="'+X(i)+'" y="'+(h-4)+'" font-size="10" text-anchor="'+(i===0?'start':i===n-1?'end':'middle')+'" fill="#888">'+esc(bname(L[i].b))+'</text>';});
+ const pl=k=>L.map((e,i)=>X(i)+','+Y(e[k])).join(' ');
+ return '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;max-width:640px">'+g+'<polyline points="'+pl('cg')+'" fill="none" stroke="#3b7fc4" stroke-width="2.5"/><polyline points="'+pl('ca')+'" fill="none" stroke="#b5391f" stroke-width="2.5"/></svg><div class="mute"><span style="color:#b5391f">━</span> '+esc(sbNm(0))+'部屋(親)　<span style="color:#3b7fc4">━</span> '+esc(sbNm(G.mp.gh))+'部屋(子)</div>';}
+function sbItems(it){return it&&it.length?it.map(x=>esc(x[0])+(x[1]>1?' '+x[1]:'')+' '+(x[2]>0?'+':'')+x[2]).join(' ／ '):'(なし)';}
+function sbTrk(who,col,p,steps){return '<div class="trk"><div class="ln"></div><div class="pg" style="width:'+p.v+'%;background:'+col+'"></div>'+steps.map(s=>'<div class="st'+(s[1]<=p.v?' d':'')+'" style="left:'+s[1]+'%"><em>'+s[0]+'</em></div>').join('')+'<div class="who" style="left:'+Math.max(6,Math.min(94,p.v))+'%;background:'+col+'">いまここ</div></div>';}
+function sbCard(){const sb=sbOf();if(!sb||!G.mp)return '';const gh=G.mp.gh,A=sbNm(0),B=gh>0?sbNm(gh):'相手';
+ if(sb.b0==null||!(gh>0))return '<div class="sbc"><h3>勝負('+esc(sbTitle(sb))+')</h3><p class="mute">相手が参加して、最初の場所が終わると、ここに出ます。</p></div>';
+ const L=sb.log,head=(t)=>'<div class="sbc"><h3>勝負('+esc(t)+')</h3>'+(sb.done?'<p class="lead2"><b>決着:'+(sb.done.w==='t'?'引き分け':esc(sb.done.w==='a'?A:B)+'部屋の勝ち')+'</b>('+bname(sb.done.b)+')<br><span class="mute">'+esc(sb.done.why)+' そのあとも続けられます。</span></p>':'');
+ const two=(a,b)=>'<div class="sbg"><div class="sbp"><b style="color:#b5391f">'+esc(A)+'部屋(親)</b>'+a+'</div><div class="sbp"><b style="color:#3b7fc4">'+esc(B)+'部屋(子)</b>'+b+'</div></div>';
+ if(sb.k===1){const ta=sb.res?sb.res.a:sb.ta,tg=sb.res?sb.res.g:sb.tg;
+  return head('点数勝負 '+sb.y+' 年')+two('<div class="sbn">'+ta+'<small> 点</small></div><div class="mute">'+(ta>=tg?'1 位':'2 位')+(ta!==tg?'・'+Math.abs(ta-tg)+' 点差':'・同点')+'</div>','<div class="sbn">'+tg+'<small> 点</small></div><div class="mute">'+(tg>=ta?'1 位':'2 位')+'</div>')+
+  '<h4>点数の移り変わり</h4>'+sbChart(L)+'<h4>場所ごとの点数(新しい順)</h4><table class="sbt"><tr><th>場所</th><th>'+esc(A)+'</th><th>'+esc(B)+'</th><th>'+esc(A)+' 合計</th><th>'+esc(B)+' 合計</th></tr>'+
+  L.slice(-8).reverse().map(e=>'<tr><td>'+bname(e.b)+'</td><td>'+e.a+'</td><td>'+e.g+'</td><td>'+e.ca+'</td><td>'+e.cg+'</td></tr>').join('')+'</table>'+
+  '<h4>先場所の点数のわけ</h4><div style="font-size:13px;line-height:1.7">'+esc(A)+':'+sbItems(sb.ia)+'<br>'+esc(B)+':'+sbItems(sb.ig)+'<br><span class="mute">点数のきまりは推定です(遊びながら直します)。</span></div></div>';}
+ if(sb.k===2){const pa=sbProg(0),pg=sbProg(gh);let st,t1,t2;
+  if(sb.g==='yok'){st=SB_LV.map((s,i)=>[s,SB_POS[i]]);t1=pa.t;t2=pg.t;}else{const m=sb.g==='yu3'?3:5;st=[];for(let i=1;i<=m;i++)st.push([String(i),i/m*100]);}
+  return head('先に目標に届いたほうの勝ち')+'<p style="margin:0 0 4px"><b>目標:'+esc(SB_GOAL[sb.g])+'</b></p>'+
+  '<div class="sbp"><b style="color:#b5391f">'+esc(A)+'部屋(親)</b>:'+esc(pa.t)+sbTrk('','#b5391f',pa,st)+'</div><div style="height:6px"></div><div class="sbp"><b style="color:#3b7fc4">'+esc(B)+'部屋(子)</b>:'+esc(pg.t)+sbTrk('','#3b7fc4',pg,st)+'</div>'+
+  '<p class="mute" style="margin:8px 0 0">横綱は始めたときにいた横綱を数えません。新十両は初めて関取になった人を数えます。</p></div>';}
+ if(sb.k===3){const rk=e=>e.a>e.g?[1,2]:e.a<e.g?[2,1]:[1,1];
+  return head('部屋番付・終わりなし')+'<p style="margin:0 0 6px">部屋の格(格点)は、場所ごとに関取の数・番付・優勝・三賞などの点数で決めます。同点は両方 1 位。</p>'+
+  two('今場所 <b style="font-size:22px">'+(L.length?rk(L[L.length-1])[0]:'—')+' 位</b><br><span class="mute">通算 1 位 '+sb.r1.a+' 回</span>','今場所 <b style="font-size:22px">'+(L.length?rk(L[L.length-1])[1]:'—')+' 位</b><br><span class="mute">通算 1 位 '+sb.r1.g+' 回</span>')+
+  '<h4>場所ごとの順位(新しい順)</h4><table class="sbt"><tr><th>場所</th><th>'+esc(A)+'</th><th>'+esc(B)+'</th><th>'+esc(A)+'の格点</th><th>'+esc(B)+'の格点</th></tr>'+L.slice(-8).reverse().map(e=>{const r=rk(e);return '<tr><td>'+bname(e.b)+'</td><td>'+r[0]+' 位</td><td>'+r[1]+' 位</td><td>'+e.a+'</td><td>'+e.g+'</td></tr>';}).join('')+'</table></div>';}
+ const lv=n=>SB_LV[Math.max(0,n-1)];
+ return head('記録だけ')+'<p class="mute" style="margin:0 0 6px">勝ち負けはつけません。場所ごとの成績を並べます。</p><table class="sbt"><tr><th>場所</th><th>'+esc(A)+' 関取</th><th>最高位</th><th>'+esc(B)+' 関取</th><th>最高位</th></tr>'+L.slice(-8).reverse().map(e=>'<tr><td>'+bname(e.b)+'</td><td>'+e.sa+'</td><td>'+lv(e.ta)+'</td><td>'+e.sg+'</td><td>'+lv(e.tg)+'</td></tr>').join('')+'</table><p class="mute" style="margin:6px 0 0">幕内優勝(始めてから):'+esc(A)+' '+sb.yu.a+' 回・'+esc(B)+' '+sb.yu.g+' 回</p></div>';}
+const sbK0=kirokuHTML;kirokuHTML=function(){const h=sbK0();let c='';try{c=sbCard();}catch(e){try{sysLog('勝負の欄',e);}catch(x){}}if(!c)return h;return c+h;};
+/* --- 決着のお知らせ(親も子も 1 回だけ) --- */
+function sbNotice(){const sb=sbOf();if(!sb||!sb.done||UI.title||!G.mp.id)return;const k='sbseen_'+G.mp.id+(UI.mpGuest?'g':'h');let s='';try{s=localStorage.getItem(k);}catch(e){}if(s===String(sb.done.b))return;try{localStorage.setItem(k,String(sb.done.b));}catch(e){}
+ const A=sbNm(0)+'部屋',B=sbNm(G.mp.gh)+'部屋';setTimeout(()=>{try{alertM('勝負が決まりました',sb.done.why+(sb.done.w==='t'?'引き分けです。':(sb.done.w==='a'?A:B)+'の勝ちです!')+'このあとも続けられます。');}catch(e){}},60);}
+const sbR0=render0;render0=function(){sbR0();try{sbNotice();}catch(e){}};
+</script>
+<style id="sbCss">
+.sbb{position:relative;z-index:59;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#2b3d52;color:#fff;padding:5px 12px;font:13px sans-serif;border-top:1px solid #ffffff22}
+.sbb .tag{background:#c9a44c;color:#222;border-radius:10px;padding:1px 9px;font-weight:bold}
+.sbb .sc{display:flex;align-items:center;gap:6px;background:#ffffff1a;border-radius:14px;padding:2px 10px}.sbb .sc b{font-size:15px}
+.sbb .lead{color:#ffd76a;font-weight:bold}
+.sbb .bar{display:inline-block;width:70px;height:8px;background:#ffffff33;border-radius:4px;overflow:hidden}.sbb .bar i{display:block;height:100%;background:#c9a44c}
+@media(max-width:600px){.sbb{font-size:12px;gap:6px;padding:4px 8px}.sbb .bar{width:44px}}
+.sbc{border:2px solid var(--ai);border-radius:10px;padding:12px;margin:10px 0;background:#fffc}.sbc h3{margin:0 0 8px}.sbc h4{margin:10px 0 2px}.sbc .mute{font-size:12px}.lead2{background:#fff3cf;border-radius:8px;padding:6px 10px;margin:0 0 8px}
+.sbg{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.sbg{grid-template-columns:1fr}}
+.sbp{border:1px solid var(--line);border-radius:8px;padding:8px}.sbn{font-size:26px;font-weight:bold}.sbn small{font-size:13px}
+table.sbt{border-collapse:collapse;width:100%;font-size:13px}table.sbt th,table.sbt td{border-bottom:1px solid var(--line);padding:3px 6px;text-align:right}table.sbt th:first-child,table.sbt td:first-child{text-align:left}
+.trk{position:relative;height:34px;margin:14px 8px 22px}.trk .ln{position:absolute;left:0;right:0;top:15px;height:4px;background:#ddd;border-radius:2px}
+.trk .pg{position:absolute;left:0;top:15px;height:4px;border-radius:2px}
+.trk .st{position:absolute;top:8px;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #bbb;margin-left:-9px}.trk .st.d{background:var(--ai);border-color:var(--ai)}
+.trk .st em{position:absolute;top:22px;left:50%;transform:translateX(-50%);font:11px sans-serif;font-style:normal;white-space:nowrap;color:#555}
+.trk .who{position:absolute;top:-14px;font:bold 11px sans-serif;transform:translateX(-50%);padding:1px 5px;border-radius:8px;color:#fff;white-space:nowrap}
+.st-go2 .sbpick{flex:1 1 100%;background:rgba(20,16,10,.88);border:1px solid #c9a24a;border-radius:6px;padding:10px 14px;color:#f3e7c9;font:13px sans-serif}
+.sbpick .sbo{border:1px solid #c9a24a;border-radius:6px;padding:6px 10px;margin:6px 0;cursor:pointer;text-align:left}.sbpick .sbo.on{background:#c9a24a33;border-color:#ffd76a}.sbpick .sbo small{display:block;opacity:.85}.sbpick .sbch{margin-top:6px}.sbpick>small{display:block;margin-top:6px;opacity:.85}
+</style>
