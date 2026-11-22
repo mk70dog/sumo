@@ -1,7 +1,7 @@
 # Grand Sumo Manager(旧名 Sumo Manager・相撲部屋物語)引き継ぎ資料
 
-作成日:2026-11-19(v115 で更新、2026-11-22)
-最新版:`sumo_manager_v115.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
+作成日:2026-11-19(v116 で更新、2026-11-22)
+最新版:`sumo_manager_v116.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
 前回の引き継ぎ:SumoManager_Handoff_20261119_v87.md(v96 時点)
 
 ---
@@ -138,6 +138,7 @@
 | v113 | 「育つ環境」を画面に出す(見本 ev1「くわしく」。ダルマさん「育つ環境の点数を画面に出す サンプル」→ ev1〜ev3 →「1」) | **稽古の画面**:「部屋の育つ環境」の欄(弟子の平均点とことば、指導力・稽古相手・施設と体づくり・稽古の中身の棒グラフ、いちばん弱い項目に「← いちばん弱い」、56 点より上なら上限が伸びる説明)。一覧(表とスマホのカード)に「育つ環境」の点数、育つ時期の力士には ↑/↓。**力士のまど**(能力・状態、自分の部屋の力士だけ):合計点とことば(70 以上とても良い・56 以上良い・42 以上ふつう・28 以上悪い)、「↑ 素質の上限が伸びています/↓ 下がっています/育つ時期を過ぎた」、4 項目の棒グラフと割合、「伸ばすには:」(いちばん弱い項目に合わせたひとこと)。点数はその場で `envSh`・`envPa`・`envFa`・`envKe` から計算(今の稽古の設定を反映)。`patches/ev113.js` を本体の最後に足す(`trustBox`・`keikoHTML` を包む)。見本:`tools/ev_sample.js`・`mkevsamples.py`。テスト:画面 3 サイズ OK、v112 の保存データ引き継ぎ OK、二人相撲 mp90 OK、注目選手 OK、40 年の自動プレイ エラー 0。`patches/patch116.py` |
 | v114 | 漆黒の画面で部屋の画面の左右の欄を半透明に(見本 dk1。ダルマさん「両サイドのグレーのパネルを半透明にする」→ tp1〜tp3 →「右側文字を黒にする」→ bk1〜bk3 →「暗いグレーのままで半透明で読めるように」→ dk1〜dk3 →「1」) | 漆黒・朱/金/銀のとき、絵の上に重なる左右の欄(`.hbleft .hbp`・`.hbright .hbp`=部屋の声・注目選手・部屋の様子)を、暗いグレー rgba(48,46,43,.7)+細かいドット、後ろをぼかす(backdrop-filter blur 6px)、字に影。札(`.otag`)にうすい黒の下地。上の「今週やること」の帯と、狭い画面で絵の下に並ぶときの欄は v109 のまま。CSS は `patches/dk114.css`。見本:`tools/mktpsamples.py`・`mkbksamples.py`・`mkdksamples.py`。テスト:画面 3 サイズ OK、v113 の保存データ引き継ぎ OK、二人相撲 mp90 OK、40 年の自動プレイ エラー 0。`patches/patch117.py` |
 | v115 | 部屋の画面の「弟子の様子」を小さな札に(見本 ws2。ダルマさん「見やすくする 力士タブの弟子たちは見やすい」→ ws1〜ws3 →「2」) | `ownTable` を札の並びに(画面の幅に合わせて並ぶ。iPad 横で 5 列):番付・四股名(Dela)・総合・けが・角番、調子と疲労の棒と数字(疲労 75 超は赤)、今週の稽古。関取は札のふちが金。押すと力士のまど。全部の画面の色で同じ。`patches/ws115.js` を本体の最後に足す。見本:`tools/ws_sample.js`・`mkwssamples.py`。テスト:画面 3 サイズ OK、v114 の保存データ引き継ぎ OK、二人相撲 mp90 OK、40 年の自動プレイ エラー 0。`patches/patch118.py` |
+| v116 | 部屋の画面の左側に部屋日誌(見本 dy1。ダルマさん「部屋日記を左側に表示 サンプルx3」→ dy1〜dy3 →「dy1」) | `HBL[2].left` を「部屋の声+部屋日誌(新しい 3 件、長いものは 3 行で切る)」に。右の「部屋の様子」(`hbYosu`)から日誌の行をなくす。左の欄は土俵より上の空きも使う(`hbFit` のあと `.hbleft` の top を 10px)。狭い画面では絵の下に並ぶ。`patches/dy116.js` を本体の最後に足す。見本:`tools/dy_sample.js`・`mkdysamples.py`。テスト:画面 3 サイズ OK、v115 の保存データ引き継ぎ OK、二人相撲 mp90 OK、40 年の自動プレイ エラー 0。`patches/patch119.py` |
 
 保存データのキー:v43 は `sumoManager43`。読み込み時に `sumoManager42`・`sumoManager41`・`sumoManager40`・`sumoManager39`・`sumoManager38`・`sumoManager37`・`sumoManager36`・`sumoManager35`・`sumoManager34`・`sumoManager33`・`sumoManager32`・`sumoManager31`・`sumoManager30`・`sumoManager29`・`sumoManager28`・`sumoManager27`・`sumoManager26`・`sumoManager25`・`sumoManager24`・`sumoManager23`・`sumoManager22`・`sumoManager21`・`sumoManager20`・`sumoManager19`・`sumoManager18`・`sumoManager17`・`sumoManager16`・`sumoManager15`・`sumoManager14`・`sumoManager13`・`sumoManager12`・`sumoManager11` と `sumoHeyaMonogatari10`〜`2` から自動で引き継ぐ(`migrate()` で v2→…→v14 を順に変換。v12→v13 は `mig13`、v13→v14 は `mig14`、v14→v15 は `mig15`、v15→v16 は `mig16`、v16→v17 は `mig17`、v17→v18 は `mig18`、v18→v19・v19→v20・v20→v21・v21→v22・v22→v23・v23→v24・v24→v25 は版の番号だけ変える。v25→v26 は実名の力士に経歴を引くための元の四股名 `r.kk` を付ける。v26→v27・v27→v28・v28→v29・v29→v30・v30→v31・v31→v32・v32→v33・v33→v34・v34→v35・v35→v36・v36→v37・v37→v38・v38→v39・v39→v40・v40→v41・v41→v42・v42→v43 は版の番号だけ(v41 の施設は新しく始めたときだけ)(v32 の優勝同点・次点の記録は、これからの場所にだけ付く)。v29 の伸びしろの変更は、これから作られる力士にだけ効く)。起動時は `G.order` があるかだけを確かめる(版の番号では確かめない。次の版でも書き換え不要)。
 
