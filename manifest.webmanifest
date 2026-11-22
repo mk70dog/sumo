@@ -1,6 +1,6 @@
 {
-  "name": "Sumo Manager",
-  "short_name": "Sumo Manager",
+  "name": "sumo manager",
+  "short_name": "sumo manager",
   "id": "/sumo/",
   "start_url": "/sumo/",
   "scope": "/sumo/",
