@@ -1,7 +1,7 @@
 # Grand Sumo Manager(旧名 Sumo Manager・相撲部屋物語)引き継ぎ資料
 
-作成日:2026-11-19(v142 で更新、2026-11-23)
-最新版:`sumo_manager_v142.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
+作成日:2026-11-19(v143 で更新、2026-11-23)
+最新版:`sumo_manager_v143.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
 前回の引き継ぎ:SumoManager_Handoff_20261119_v87.md(v96 時点)
 
 ---
@@ -167,6 +167,7 @@
 | v140 | 親方の絵 4 枚(ダルマさん「もと旭富士 もと照ノ富士 もと魁皇 もとカイセイ」) | `data/portraits140.json`(元の四股名で引く `PIMGO`):旭富士=宮城野親方(伊勢ヶ濱部屋の参与)、照ノ富士=伊勢ヶ濱親方(師匠)、魁皇=浅香山親方(師匠)、魁聖=友綱親方(浅香山部屋の部屋付き)。部屋付き親方の絵も元の四股名で引けるようにした(`piOfS`)。師匠の絵はスタッフの画面の「親方」と部屋を選ぶ画面の札(伊勢ヶ濱・浅香山・境川・藤島の 4 部屋)、部屋付き親方の絵はスタッフの札(桐山・宮城野・友綱)。テスト:v139 の保存データ引き継ぎ、ui.py。写真 `samples/pi140_*.png`。`patches/patch143.py`・`pi140_ui.js` |
 | v141 | 熱海富士の絵(ダルマさん「熱海富士」) | `data/portraits141.json`(幅 320px・約 37KB。ほかの絵より縦長)を `PIMG` に足した。力士の画面に出る(写真 `samples/pi141.png`)。テスト:v140 の保存データ引き継ぎ、3 サイズで横あふれなし。`patches/patch144.py`・`pi141_ui.js` |
 | v142 | 独立の段取りを場面に(ダルマさん「独立して弟子がついてくるこないがあっけない」「親方のコメントなどには画像を差し込む」)。入口の画面も新しく。親方の絵 5 枚(「朝日山」「安治川」「荒汐」「浦風」「雷」) | `patches/dp142_core.js`・`dp142_ui.js`(patch145)。独立を選ぶと ① 師匠に打ち明ける(25% で渋る:見込み −0.05・関係 cool +1)→ ② 一人ずつ声をかける(すぐ来る p×0.7、迷う 残りの 55%、残る。迷えば「方針を語る」「親御さんに会う」各 0.5、つながりが合えば +0.3、「答えを待つ」は p で門出前に答え)→ 返事の一覧(残る力士に 1 回だけ再説得 0.55/0.45/0.35、断られると cool +1・評判 −1)→ ③ 理事会の承認 → ④ 門出。親方・力士の言葉には絵(PIMG/PIMGO、なければ縦の名札)。v138 の出来事 dokPer は新しくは出さない(古い保存のために残す)。二人相撲の親は今まで通り(dpDS0 に回す。tests/mp84dok.py は場面を進めるように直した)。力士の移籍は独立や閉鎖のときに限られるので「あとから移ってくる」は入れなかった。数字はすべて推定。出典:荒磯部屋の新設を理事会が承認(デイリー 2021-05-27)、中村部屋の独立で内弟子 8 人が移り 2 人が残った(マネーポスト 2024)。絵:`data/portraits142.json` を `PIMGO` に(琴錦=朝日山・安美錦=安治川・蒼国来=荒汐・垣添=雷の師匠、敷島=荒汐部屋付きの浦風親方)。`tools/addpio.py` で足せる。入口(リポジトリ直下と sumo_manager の index.html)を錦絵と「Sumo Manager」の題字に(見本 samples/idx)。見本 dp1〜dp5・dp142_*。テスト tests/dp142.js(3 サイズ×4 回)、40 年 err 0、画面 3 サイズ、v141 の保存の引き継ぎ OK |
+| v143 | 間垣親方の絵(ダルマさん「間垣 喜翔」) | `data/portraits143.json`(元石浦。伊勢ヶ濱部屋の部屋付き親方)を `PIMGO` に足した(patch146・pi143_ui.js)。スタッフの画面に出る(写真 samples/pi143.png)。40 年 err 0、画面 3 サイズ、v142 の保存の引き継ぎ OK |
 
 保存データのキー:v141 は `sumoManager141`(v140 の `sumoManager140` も読む。v137 から保存は縮めた文字「LZ1:…」で、保存できたら前の版の保存を消す)。v43 は `sumoManager43`。読み込み時に `sumoManager42`・`sumoManager41`・`sumoManager40`・`sumoManager39`・`sumoManager38`・`sumoManager37`・`sumoManager36`・`sumoManager35`・`sumoManager34`・`sumoManager33`・`sumoManager32`・`sumoManager31`・`sumoManager30`・`sumoManager29`・`sumoManager28`・`sumoManager27`・`sumoManager26`・`sumoManager25`・`sumoManager24`・`sumoManager23`・`sumoManager22`・`sumoManager21`・`sumoManager20`・`sumoManager19`・`sumoManager18`・`sumoManager17`・`sumoManager16`・`sumoManager15`・`sumoManager14`・`sumoManager13`・`sumoManager12`・`sumoManager11` と `sumoHeyaMonogatari10`〜`2` から自動で引き継ぐ(`migrate()` で v2→…→v14 を順に変換。v12→v13 は `mig13`、v13→v14 は `mig14`、v14→v15 は `mig15`、v15→v16 は `mig16`、v16→v17 は `mig17`、v17→v18 は `mig18`、v18→v19・v19→v20・v20→v21・v21→v22・v22→v23・v23→v24・v24→v25 は版の番号だけ変える。v25→v26 は実名の力士に経歴を引くための元の四股名 `r.kk` を付ける。v26→v27・v27→v28・v28→v29・v29→v30・v30→v31・v31→v32・v32→v33・v33→v34・v34→v35・v35→v36・v36→v37・v37→v38・v38→v39・v39→v40・v40→v41・v41→v42・v42→v43 は版の番号だけ(v41 の施設は新しく始めたときだけ)(v32 の優勝同点・次点の記録は、これからの場所にだけ付く)。v29 の伸びしろの変更は、これから作られる力士にだけ効く)。起動時は `G.order` があるかだけを確かめる(版の番号では確かめない。次の版でも書き換え不要)。
 
