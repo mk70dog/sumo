@@ -9,6 +9,8 @@ with sync_playwright() as p:
   h.click('.st-two');h.screenshot(path='/tmp/v84_two.png');h.click('.st-dok2');h.wait_for_timeout(300)
   n=h.evaluate("dokList()[0].n");h.evaluate("n=>dokSheet(n)",n);h.wait_for_timeout(300)
   h.check('.dkw input >> nth=0');h.wait_for_timeout(200);h.click('#dkgo')
+  # v142:独立の場面(① 師匠 ② 声かけ ③ 理事会 ④ 門出)を最後まで進める
+  h.evaluate("()=>{for(let k=0;k<40&&document.getElementById('dpx')&&UI.dp;k++){const bs=[...document.querySelectorAll('#dpx button')];(bs.find(x=>x.classList.contains('ai'))||bs[0]).click();}}")
   h.wait_for_function("()=>G&&G.mp&&G.mp.id",timeout=15000);code=h.evaluate("G.mp.id");hn=h.evaluate("G.heya[0].n")
   g=ctx.new_page();g.on('pageerror',lambda e:errs.append('G:'+str(e)))
   g.goto('file://'+f+'#mpmock');g.wait_for_timeout(400);g.click('.st-two');g.click('.st-go2 .st-dok:not(.st-dok2)');g.fill('#mp_code',code);g.click('.mpkey .btn.main')
