@@ -1,0 +1,1 @@
+見本 ys1・ys2 は v136 の本体から作った(patch139 のあと、python で samples/ys1.html・ys2.html を書いた。中身は tools にある他の見本と同じ作り)。
