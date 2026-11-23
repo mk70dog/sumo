@@ -3,15 +3,25 @@
 <head>
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-cache"><meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grand Sumo Manager</title>
+<title>Sumo Manager</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="img/icon180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="sumo manager">
+<meta name="theme-color" content="#1d1a16">
 <meta http-equiv="refresh" content="0; url=sumo_manager_v141.html">
+<style>html,body{margin:0;height:100%;background:#1d1a16;color:#f3ead6;font-family:"Hiragino Mincho ProN","Yu Mincho",serif}
+.bg{position:fixed;inset:0;background:url(img/nishikie_dohyoiri.jpg) center/cover;filter:brightness(.45)}
+.c{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:0 16px}
+h1{margin:0;font-size:clamp(34px,7vw,64px);letter-spacing:.08em;text-shadow:0 2px 8px #000}
+.v{font-size:14px;opacity:.8}.l{font-size:15px;opacity:.9}
+.d{display:inline-block;animation:b 1.2s infinite}.d:nth-child(2){animation-delay:.2s}.d:nth-child(3){animation-delay:.4s}@keyframes b{50%{opacity:.2}}
+a.go{display:inline-block;margin-top:8px;padding:12px 44px;background:#b3261e;color:#fff;text-decoration:none;border-radius:6px;font-size:18px;box-shadow:0 2px 8px #0008}
+.j{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;font:12px sans-serif;opacity:.55}.j a{color:#f3ead6}</style>
 </head>
-<body style="font-family:sans-serif;padding:24px">
-<p>最新版の <a href="sumo_manager_v141.html">Grand Sumo Manager v141</a> を開いています。開かないときはリンクを押してください。</p>
+<body><div class="bg"></div>
+<div class="c"><h1>Sumo Manager</h1><div class="v" id="v"></div><div class="l">土俵へご案内しています<span class="d">・</span><span class="d">・</span><span class="d">・</span></div><a class="go" id="go" href="sumo_manager_v141.html">開く</a></div>
+<script>(function(){var a=document.getElementById('go'),m=a.getAttribute('href').match(/v(\d+)\.html/);if(m)document.getElementById('v').textContent='v'+m[1];setTimeout(function(){location.replace(a.href);},350);})();</script>
 </body>
 </html>
