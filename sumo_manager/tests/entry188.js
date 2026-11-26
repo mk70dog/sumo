@@ -17,7 +17,7 @@ const stats={err:0,errs:[],yoko:[],own:[],tr:[],quit:0,quitEarly:0,joined:0,scan
 const t0=Date.now();
 function G(){return C.__get();}
 const seenOwn=new Set();
-const seen=new Set(Object.keys(G().R));const CNT={};const RET={};const OWNN={};
+const seenO=new Set(G().order);const CO={};const seen=new Set(Object.keys(G().R));const CNT={};const RET={};const OWNN={};
 for(let b=0;b<yrs*6;b++){
  {const g=G();const bi=(g.bnum-1)%6;const yr=Math.floor((g.bnum-1)/6);for(const id in g.R){if(!seen.has(id)){seen.add(id);const r=g.R[id];const k=yr+':'+bi;CNT[k]=(CNT[k]||0)+1;if(r.h===C.me().i||r.h===0)OWNN[yr]=(OWNN[yr]||0)+1;}}
   RET[yr]=Object.values(g.R).filter(r=>r.ret).length;}
@@ -31,6 +31,7 @@ for(let b=0;b<yrs*6;b++){
     if(BAD){const o=C.ownAll();o.forEach(r=>{r.sh='厳';});G().meSel={auto:0,ids:o.slice(0,2).map(r=>r.id)};}
     C.doWeek();}
   }
+  {const g2=G();const bi=(g2.bnum-1)%6;const yr=Math.floor((g2.bnum-1)/6);for(const id of g2.order){if(!seenO.has(id)){seenO.add(id);const k=yr+':'+bi;CO[k]=(CO[k]||0)+1;}}}
   while(G().phase==='basho')C.advanceDay();
   g=G();
   g.order.forEach(id=>{const r=g.R[id];if(r.h===0&&!seenOwn.has(id)){seenOwn.add(id);}});
@@ -55,4 +56,4 @@ const out={file,yrs,seed:seedS,err:stats.err,errs:stats.errs,sec:Math.round((Dat
  ownAvg:+mean(stats.own).toFixed(1),trAvg:+mean(stats.tr).toFixed(1),trHist:hist(stats.tr),atmo:+mean(stats.atmo).toFixed(1),jin:stats.jin.length?+mean(stats.jin).toFixed(1):null,
  ownRetired:own.length,scand:stats.scand,ev:stats.ev,heyaN:g.heya.length,total:g.order.length,money:Math.round(g.money)};
 if(g.st16)out.st16=g.st16;if(g.yfin)out.yfin=g.yfin.map(x=>[x.i-x.o,x.m]);out.over=!!g.over;out.supC=g.supC;out.sup=g.sup;out.chi=g.chi;
-const Y={};for(const k in CNT){const [y,bi]=k.split(':');Y[y]=Y[y]||[0,0,0,0,0,0];Y[y][bi]+=CNT[k];}console.log('ENTRY',JSON.stringify(Y));console.log('TOTAL',G().order.length);
+const Y={};for(const k in CNT){const [y,bi]=k.split(':');Y[y]=Y[y]||[0,0,0,0,0,0];Y[y][bi]+=CNT[k];}const Y2={};for(const k in CO){const [y,bi]=k.split(':');Y2[y]=Y2[y]||[0,0,0,0,0,0];Y2[y][bi]+=CO[k];}const ys=Object.keys(Y2).map(Number).sort((a,b)=>a-b).slice(1,-1);const avg=[0,1,2,3,4,5].map(i=>+(ys.reduce((s,y)=>s+Y2[y][i],0)/ys.length).toFixed(1));console.log('DEBUT',JSON.stringify(avg),'年',+(avg.reduce((a,b)=>a+b,0)).toFixed(1),JSON.stringify(ys.map(y=>Y2[y].reduce((a,b)=>a+b,0))));console.log('TOTAL',G().order.length);
