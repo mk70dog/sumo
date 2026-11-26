@@ -1,7 +1,7 @@
 # Grand Sumo Manager(旧名 Sumo Manager・相撲部屋物語)引き継ぎ資料
 
-作成日:2026-11-19(v182 で更新、2026-11-25)
-最新版:`sumo_manager_v182.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
+作成日:2026-11-19(v183 で更新、2026-11-27)
+最新版:`sumo_manager_v183.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
 前回の引き継ぎ:SumoManager_Handoff_20261119_v87.md(v96 時点)
 
 ---
@@ -209,6 +209,7 @@
 | v180 | 藤ノ川の絵(ダルマさん「差し替え」) | v179 で若元春の 2 枚目にした黒地に緑の絵は、藤ノ川の名前(NAIWAITAGAMI)で描き直した絵が届いたので、`PIMG['藤ノ川']` に入れ、若元春の 2 枚目は外した(若元春は青地に星の 1 枚だけ)。patch183 が v179 の pi179 の getter の部分を消す。絵は data/portraits180.json、`patches/pi180_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v179 の保存データ引き継ぎ OK。`patches/patch183.py` |
 | v181 | 寿之富士の絵(ダルマさん「差し替え 寿之富士」) | v178 で錦富士の 2 枚目にした「寿」の化粧まわし(銀座鮨処いし原)の絵は、寿之富士の名前で描き直した絵が届いたので `PIMG['寿之富士']` に入れ、錦富士の 2 枚目から外した(錦富士は 渓流の絵・翡翠の絵の 2 枚で場所ごとに替わる)。patch184 が v178 の getter の表(A)から外す。絵は data/portraits181.json、`patches/pi181_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v180 の保存データ引き継ぎ OK。`patches/patch184.py` |
 | v182 | 絵の取り違えの直し(ダルマさん「錦富士 確認するので表示」で見つかった) | v178 でもらった 8 枚の順番を取り違えていた:錦富士の 2 枚目に入れた般若の絵は**嵐富士**の絵(嵐富士にはもう同じ絵がある)、旭富士に入れたカワセミの絵は**錦富士**の絵(v175 の錦富士と同じ)。直し:錦富士の 2 枚目を外し(錦富士はカワセミの 1 枚)、旭富士は紫の化粧まわし(太宰府天満宮)の絵にした。これで v178〜v181 の絵 11 人分を一覧で確かめた(`samples/pi182_list.png`)。炎鵬だけ 2 枚(北陸製菓・北海道の字)で場所ごとに替わる。patch185 は v178 の表 A から錦富士を消す。絵は data/portraits182.json、`patches/pi182_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v181 の保存データ引き継ぎ OK。`patches/patch185.py`。**教訓:絵を何枚も一度にもらったら、入れる前に名前つきの一覧の写真を作って見比べる。** |
+| v183 | 親方の絵(ダルマさん「不知火 匡也」「阿武松 健二」) | `PIMGO['若荒雄']`(不知火親方=元小結 若荒雄。阿武松部屋付き)と `PIMGO['大道']`(阿武松親方=元前頭 大道)。ダルマさんの「匡也」「健二」は現役時代の四股名の下の名前(若荒雄匡也・大道健二)。スタッフの画面で 2 人とも絵が出るのを確かめた。絵は data/portraits183.json、`patches/pi183_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v182 の保存データ引き継ぎ OK。`patches/patch186.py` |
 
 保存データのキー:v141 は `sumoManager141`(v140 の `sumoManager140` も読む。v137 から保存は縮めた文字「LZ1:…」で、保存できたら前の版の保存を消す)。v43 は `sumoManager43`。読み込み時に `sumoManager42`・`sumoManager41`・`sumoManager40`・`sumoManager39`・`sumoManager38`・`sumoManager37`・`sumoManager36`・`sumoManager35`・`sumoManager34`・`sumoManager33`・`sumoManager32`・`sumoManager31`・`sumoManager30`・`sumoManager29`・`sumoManager28`・`sumoManager27`・`sumoManager26`・`sumoManager25`・`sumoManager24`・`sumoManager23`・`sumoManager22`・`sumoManager21`・`sumoManager20`・`sumoManager19`・`sumoManager18`・`sumoManager17`・`sumoManager16`・`sumoManager15`・`sumoManager14`・`sumoManager13`・`sumoManager12`・`sumoManager11` と `sumoHeyaMonogatari10`〜`2` から自動で引き継ぐ(`migrate()` で v2→…→v14 を順に変換。v12→v13 は `mig13`、v13→v14 は `mig14`、v14→v15 は `mig15`、v15→v16 は `mig16`、v16→v17 は `mig17`、v17→v18 は `mig18`、v18→v19・v19→v20・v20→v21・v21→v22・v22→v23・v23→v24・v24→v25 は版の番号だけ変える。v25→v26 は実名の力士に経歴を引くための元の四股名 `r.kk` を付ける。v26→v27・v27→v28・v28→v29・v29→v30・v30→v31・v31→v32・v32→v33・v33→v34・v34→v35・v35→v36・v36→v37・v37→v38・v38→v39・v39→v40・v40→v41・v41→v42・v42→v43 は版の番号だけ(v41 の施設は新しく始めたときだけ)(v32 の優勝同点・次点の記録は、これからの場所にだけ付く)。v29 の伸びしろの変更は、これから作られる力士にだけ効く)。起動時は `G.order` があるかだけを確かめる(版の番号では確かめない。次の版でも書き換え不要)。
 
