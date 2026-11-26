@@ -1,7 +1,7 @@
 # Grand Sumo Manager(旧名 Sumo Manager・相撲部屋物語)引き継ぎ資料
 
-作成日:2026-11-19(v186 で更新、2026-11-27)
-最新版:`sumo_manager_v186.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
+作成日:2026-11-19(v187 で更新、2026-11-27)
+最新版:`sumo_manager_v187.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
 前回の引き継ぎ:SumoManager_Handoff_20261119_v87.md(v96 時点)
 
 ---
@@ -213,6 +213,7 @@
 | v184 | 阿武剋の絵(ダルマさん) | `PIMG['阿武剋']`(水色の化粧まわしに城と梅、下に「新名学園 旭丘高等学校」)。化粧まわしの四股名「阿武剋」で確かめた。絵は data/portraits184.json、`patches/pi184_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v183 の保存データ引き継ぎ OK。`patches/patch187.py` |
 | v185 | 大島親方の絵(ダルマさん「大島 勝」) | `PIMGO['旭天鵬']`(大島親方=元関脇 旭天鵬。「勝」は現役時代の四股名の下の名前)。大島部屋のスタッフの画面で絵が出るのを確かめた。絵は data/portraits185.json、`patches/pi185_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v184 の保存データ引き継ぎ OK。`patches/patch188.py` |
 | v186 | 玉垣親方の絵(ダルマさん「玉垣 伸哉」) | `PIMGO['智乃花']`(玉垣親方=元小結 智乃花。大島部屋付き)。大島部屋のスタッフの画面で大島親方・玉垣親方の 2 人とも絵が出るのを確かめた。絵は data/portraits186.json、`patches/pi186_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v185 の保存データ引き継ぎ OK。`patches/patch189.py` |
+| v187 | 部屋の声の言葉を週ごとに変える(ダルマさん「親方 おかみさんのコメントが同じコメントが多い。毎回違うコメントにする」) | `patches/koe187.js` が `koePeople` を包む。師匠・おかみさん・部屋付き親方の言葉を、今のようす(お金・部屋頭とその先場所の成績・角番・優勝・けが・疲れ・落ち込み・場所までの週・巡業・新弟子・後援会・関取の数・定年・季節〈次の場所の月〉)から話題ごとに集め、重みつきで 3 個(部屋付き親方は 2 個)選ぶ。同じ話題からは 1 つ。最近 12 回に言った言葉は選ばず、全部言ったことのある話題は重みを 1/10 に(`G._koeH`)。同じ週は同じ言葉(`G._koe`、鍵は 場所番号×10+週)。弟子・マネージャー・トレーナーの言葉は今まで通り。測定:約 50 週で師匠とおかみさんの言葉 306 回のうち 160 種類、いちばん多い言葉でも 7 回。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v186 の保存データ引き継ぎ OK、二人相撲 OK。`patches/patch190.py` |
 
 保存データのキー:v141 は `sumoManager141`(v140 の `sumoManager140` も読む。v137 から保存は縮めた文字「LZ1:…」で、保存できたら前の版の保存を消す)。v43 は `sumoManager43`。読み込み時に `sumoManager42`・`sumoManager41`・`sumoManager40`・`sumoManager39`・`sumoManager38`・`sumoManager37`・`sumoManager36`・`sumoManager35`・`sumoManager34`・`sumoManager33`・`sumoManager32`・`sumoManager31`・`sumoManager30`・`sumoManager29`・`sumoManager28`・`sumoManager27`・`sumoManager26`・`sumoManager25`・`sumoManager24`・`sumoManager23`・`sumoManager22`・`sumoManager21`・`sumoManager20`・`sumoManager19`・`sumoManager18`・`sumoManager17`・`sumoManager16`・`sumoManager15`・`sumoManager14`・`sumoManager13`・`sumoManager12`・`sumoManager11` と `sumoHeyaMonogatari10`〜`2` から自動で引き継ぐ(`migrate()` で v2→…→v14 を順に変換。v12→v13 は `mig13`、v13→v14 は `mig14`、v14→v15 は `mig15`、v15→v16 は `mig16`、v16→v17 は `mig17`、v17→v18 は `mig18`、v18→v19・v19→v20・v20→v21・v21→v22・v22→v23・v23→v24・v24→v25 は版の番号だけ変える。v25→v26 は実名の力士に経歴を引くための元の四股名 `r.kk` を付ける。v26→v27・v27→v28・v28→v29・v29→v30・v30→v31・v31→v32・v32→v33・v33→v34・v34→v35・v35→v36・v36→v37・v37→v38・v38→v39・v39→v40・v40→v41・v41→v42・v42→v43 は版の番号だけ(v41 の施設は新しく始めたときだけ)(v32 の優勝同点・次点の記録は、これからの場所にだけ付く)。v29 の伸びしろの変更は、これから作られる力士にだけ効く)。起動時は `G.order` があるかだけを確かめる(版の番号では確かめない。次の版でも書き換え不要)。
 
