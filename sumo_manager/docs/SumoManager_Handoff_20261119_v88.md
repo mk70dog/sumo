@@ -1,7 +1,7 @@
 # Grand Sumo Manager(旧名 Sumo Manager・相撲部屋物語)引き継ぎ資料
 
-作成日:2026-11-19(v194 で更新、2026-11-27)
-最新版:`sumo_manager_v194.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
+作成日:2026-11-19(v195 で更新、2026-11-28)
+最新版:`sumo_manager_v195.html`(単一 HTML、外部ファイルなし。背景の錦絵と字体も中に入れてある。約 4.5MB)
 前回の引き継ぎ:SumoManager_Handoff_20261119_v87.md(v96 時点)
 
 ---
@@ -222,6 +222,7 @@
 | v192 | トレーナーの絵 4 枚(ダルマさん。Gemini の 2×2 を切り分け。見本 tr192) | `TRIMG`:gym=左上(タオルの男性)、mental=右上(眼鏡・ストップウォッチ)、diet=左下(女性・管理栄養士)、clinic=右下(白い施術着)。かかりつけ医(doc)は絵なし。稽古タブ「外部との契約」のボタンに小さな顔(`.trb`)。部屋の声:契約している担当の人が週ごとに 1 人交代で出る(`trLines`、担当ごとの言葉)。けがの「あと何週」を整数に。絵は data/trainer192.json、`patches/tr192_ui.js`、`patches/patch195.py`。v194 と一緒に公開。 |
 | v193 | 絵のない力士の共通の顔 4 枚(ダルマさん。Gemini の 2×2。見本 genr193) | `GENR`・`genPic(r)`:幕下以下は 体重 120kg 未満=細身・ちょんまげ、それ以上=ぽっちゃり。関取は紺・朱の化粧まわしの 2 枚から id で固定。`PIMG` があればそちらが先(`piOfR` を包む)。部屋の声の弟子の窓にも出る。関取の共通の顔は、ダルマさんが関取・親方の絵をこれから全部作る予定なので、それまでの間に合わせ(一覧 `docs/pi_todo_20261127.md`)。絵は data/genr193.json、`patches/genr193_ui.js`、`patches/patch196.py`。v194 と一緒に公開。 |
 | v194 | 新しい情報が分かるように(ダルマさん「開いた時に何が未読なのかをわかりやすく」→見本 nw1〜3 →「2」) | 新弟子タブ:開く前の未読の候補(`!p.seen`)を `UI.nwP` に取っておき、一覧の上に「前回見てから 新しい候補 N 人」、名前に「新」、赤い左線、「新しい候補」「前からいる候補」に分けて新しいほうを上に。記録タブ:開く前の `G.media.seen` を `UI.nwM` に取っておき、メディアの欄を自動で開いて見出しに「新 N」、同じく帯・「新」・分けて並べる。次に開くと消える。`patches/nw194_ui.js`。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v191 の保存データ引き継ぎ OK、二人相撲 OK。`patches/patch197.py` |
+| v195 | 部屋の画面を iPad で 1 画面に(ダルマさん「スクロールせずに iPad で全てを表示」→見本 fv1〜3 →「FV1。絵の下の欄もなくして本当に 1 画面だけに」) | `patches/fv195_ui.js`。部屋の画面のとき body に `vh1`。横幅 900px 以上・高さ 600px 以上(iPad 横)だけ:上の段を 1 行に細く、タブを低く、「今週やること」を細く、絵(`.hbs`)を `100vh−150px` にして絵は cover、左右の欄は絵の中に収めて欄の中だけスクロール。絵の下(`.hbs~*`=弟子の様子・部屋の様子・部屋日誌の大きな欄)は出さない(部屋の様子・日誌は絵の中の欄と同じ中身)。iPad 縦・スマホは今まで通り。場所のあと(悩みごとの欄が上に出るとき)は 1 画面に収まらないことがある。測定:1133×744(iPad の Safari)と 1180×820 でページの高さ=画面の高さ。テスト:40 年の自動プレイ エラー 0、画面 3 サイズ OK、v194 の保存データ引き継ぎ OK、二人相撲 OK。`patches/patch198.py` |
 
 保存データのキー:v141 は `sumoManager141`(v140 の `sumoManager140` も読む。v137 から保存は縮めた文字「LZ1:…」で、保存できたら前の版の保存を消す)。v43 は `sumoManager43`。読み込み時に `sumoManager42`・`sumoManager41`・`sumoManager40`・`sumoManager39`・`sumoManager38`・`sumoManager37`・`sumoManager36`・`sumoManager35`・`sumoManager34`・`sumoManager33`・`sumoManager32`・`sumoManager31`・`sumoManager30`・`sumoManager29`・`sumoManager28`・`sumoManager27`・`sumoManager26`・`sumoManager25`・`sumoManager24`・`sumoManager23`・`sumoManager22`・`sumoManager21`・`sumoManager20`・`sumoManager19`・`sumoManager18`・`sumoManager17`・`sumoManager16`・`sumoManager15`・`sumoManager14`・`sumoManager13`・`sumoManager12`・`sumoManager11` と `sumoHeyaMonogatari10`〜`2` から自動で引き継ぐ(`migrate()` で v2→…→v14 を順に変換。v12→v13 は `mig13`、v13→v14 は `mig14`、v14→v15 は `mig15`、v15→v16 は `mig16`、v16→v17 は `mig17`、v17→v18 は `mig18`、v18→v19・v19→v20・v20→v21・v21→v22・v22→v23・v23→v24・v24→v25 は版の番号だけ変える。v25→v26 は実名の力士に経歴を引くための元の四股名 `r.kk` を付ける。v26→v27・v27→v28・v28→v29・v29→v30・v30→v31・v31→v32・v32→v33・v33→v34・v34→v35・v35→v36・v36→v37・v37→v38・v38→v39・v39→v40・v40→v41・v41→v42・v42→v43 は版の番号だけ(v41 の施設は新しく始めたときだけ)(v32 の優勝同点・次点の記録は、これからの場所にだけ付く)。v29 の伸びしろの変更は、これから作られる力士にだけ効く)。起動時は `G.order` があるかだけを確かめる(版の番号では確かめない。次の版でも書き換え不要)。
 
